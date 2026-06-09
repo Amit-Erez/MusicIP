@@ -1,0 +1,372 @@
+{
+  "applications": [
+    {
+      "id": "app_001",
+      "submittedAt": "2026-04-12T09:30:00Z",
+      "status": "Under Review",
+      "flagged": false,
+      "applicant": {
+        "name": "Silver Thread Records",
+        "type": "Independent Label",
+        "country": "UK",
+        "contactEmail": "finance@silverthread.com"
+      },
+      "ip": {
+        "catalogueSize": 240,
+        "estimatedCatalogueValue": 1200000,
+        "masterOwnership": "full",
+        "publishingOwnership": "co-publish",
+        "activeSyncDeals": 3,
+        "annualStreamingRevenue": 87000
+      },
+      "loanRequest": {
+        "amountRequested": 250000,
+        "term": 24,
+        "purpose": "catalogue acquisition"
+      },
+      "notes": [
+        {
+          "id": "n1",
+          "author": "Analyst",
+          "text": "Streaming revenue trending up 18% YoY.",
+          "createdAt": "2026-04-14T11:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "app_002",
+      "submittedAt": "2026-04-18T13:15:00Z",
+      "status": "Pending",
+      "flagged": false,
+      "applicant": {
+        "name": "North Harbor Music",
+        "type": "Publisher",
+        "country": "US",
+        "contactEmail": "accounts@northharbormusic.com"
+      },
+      "ip": {
+        "catalogueSize": 95,
+        "estimatedCatalogueValue": 420000,
+        "masterOwnership": "partial",
+        "publishingOwnership": "full",
+        "activeSyncDeals": 1,
+        "annualStreamingRevenue": 32000
+      },
+      "loanRequest": {
+        "amountRequested": 85000,
+        "term": 18,
+        "purpose": "working capital"
+      },
+      "notes": []
+    },
+    {
+      "id": "app_003",
+      "submittedAt": "2026-04-21T08:45:00Z",
+      "status": "Approved",
+      "flagged": false,
+      "applicant": {
+        "name": "Golden Mile Audio",
+        "type": "Independent Label",
+        "country": "US",
+        "contactEmail": "loans@goldenmileaudio.com"
+      },
+      "ip": {
+        "catalogueSize": 410,
+        "estimatedCatalogueValue": 2100000,
+        "masterOwnership": "full",
+        "publishingOwnership": "co-publish",
+        "activeSyncDeals": 5,
+        "annualStreamingRevenue": 165000
+      },
+      "loanRequest": {
+        "amountRequested": 300000,
+        "term": 36,
+        "purpose": "catalogue acquisition"
+      },
+      "notes": [
+        {
+          "id": "n2",
+          "author": "Credit Committee",
+          "text": "Strong cash flow and diversified catalogue.",
+          "createdAt": "2026-04-24T10:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "app_004",
+      "submittedAt": "2026-04-23T16:20:00Z",
+      "status": "Pending",
+      "flagged": false,
+      "applicant": {
+        "name": "Blue Lantern Rights",
+        "type": "Publisher",
+        "country": "Germany",
+        "contactEmail": "finance@bluelanternrights.de"
+      },
+      "ip": {
+        "catalogueSize": 180,
+        "estimatedCatalogueValue": 780000,
+        "masterOwnership": "none",
+        "publishingOwnership": "full",
+        "activeSyncDeals": 2,
+        "annualStreamingRevenue": 54000
+      },
+      "loanRequest": {
+        "amountRequested": 140000,
+        "term": 24,
+        "purpose": "rights acquisition"
+      },
+      "notes": []
+    },
+    {
+      "id": "app_005",
+      "submittedAt": "2026-04-26T11:05:00Z",
+      "status": "Declined",
+      "flagged": false,
+      "applicant": {
+        "name": "Velvet Echo Holdings",
+        "type": "Artist Collective",
+        "country": "UK",
+        "contactEmail": "admin@velvetecho.co.uk"
+      },
+      "ip": {
+        "catalogueSize": 60,
+        "estimatedCatalogueValue": 210000,
+        "masterOwnership": "full",
+        "publishingOwnership": "partial",
+        "activeSyncDeals": 0,
+        "annualStreamingRevenue": 12000
+      },
+      "loanRequest": {
+        "amountRequested": 180000,
+        "term": 24,
+        "purpose": "marketing expansion"
+      },
+      "notes": [
+        {
+          "id": "n3",
+          "author": "Analyst",
+          "text": "Revenue profile insufficient for requested amount.",
+          "createdAt": "2026-04-28T09:15:00Z"
+        }
+      ]
+    },
+    {
+      "id": "app_006",
+      "submittedAt": "2026-04-29T14:40:00Z",
+      "status": "Under Review",
+      "flagged": false,
+      "applicant": {
+        "name": "Atlas Groove Publishing",
+        "type": "Publisher",
+        "country": "US",
+        "contactEmail": "finance@atlasgroove.com"
+      },
+      "ip": {
+        "catalogueSize": 520,
+        "estimatedCatalogueValue": 3400000,
+        "masterOwnership": "partial",
+        "publishingOwnership": "full",
+        "activeSyncDeals": 8,
+        "annualStreamingRevenue": 240000
+      },
+      "loanRequest": {
+        "amountRequested": 450000,
+        "term": 48,
+        "purpose": "catalogue acquisition"
+      },
+      "notes": [
+        {
+          "id": "n4",
+          "author": "Analyst",
+          "text": "Awaiting updated royalty statements.",
+          "createdAt": "2026-05-01T12:20:00Z"
+        }
+      ]
+    },
+    {
+      "id": "app_007",
+      "submittedAt": "2026-05-02T10:10:00Z",
+      "status": "Pending",
+      "flagged": false,
+      "applicant": {
+        "name": "Moonline Records",
+        "type": "Independent Label",
+        "country": "France",
+        "contactEmail": "funding@moonline.fr"
+      },
+      "ip": {
+        "catalogueSize": 140,
+        "estimatedCatalogueValue": 610000,
+        "masterOwnership": "full",
+        "publishingOwnership": "co-publish",
+        "activeSyncDeals": 2,
+        "annualStreamingRevenue": 46000
+      },
+      "loanRequest": {
+        "amountRequested": 110000,
+        "term": 18,
+        "purpose": "working capital"
+      },
+      "notes": []
+    },
+    {
+      "id": "app_008",
+      "submittedAt": "2026-05-05T15:25:00Z",
+      "status": "Approved",
+      "flagged": false,
+      "applicant": {
+        "name": "Redwood Catalog Partners",
+        "type": "Rights Management",
+        "country": "Canada",
+        "contactEmail": "loans@redwoodcatalog.com"
+      },
+      "ip": {
+        "catalogueSize": 800,
+        "estimatedCatalogueValue": 5800000,
+        "masterOwnership": "full",
+        "publishingOwnership": "full",
+        "activeSyncDeals": 12,
+        "annualStreamingRevenue": 410000
+      },
+      "loanRequest": {
+        "amountRequested": 500000,
+        "term": 60,
+        "purpose": "catalogue acquisition"
+      },
+      "notes": [
+        {
+          "id": "n5",
+          "author": "Credit Committee",
+          "text": "Excellent collateral coverage ratio.",
+          "createdAt": "2026-05-08T13:30:00Z"
+        }
+      ]
+    },
+    {
+      "id": "app_009",
+      "submittedAt": "2026-05-08T09:55:00Z",
+      "status": "Declined",
+      "flagged": false,
+      "applicant": {
+        "name": "Amber Note Media",
+        "type": "Artist Collective",
+        "country": "Ireland",
+        "contactEmail": "hello@ambernote.ie"
+      },
+      "ip": {
+        "catalogueSize": 40,
+        "estimatedCatalogueValue": 150000,
+        "masterOwnership": "partial",
+        "publishingOwnership": "partial",
+        "activeSyncDeals": 0,
+        "annualStreamingRevenue": 9000
+      },
+      "loanRequest": {
+        "amountRequested": 95000,
+        "term": 12,
+        "purpose": "tour financing"
+      },
+      "notes": [
+        {
+          "id": "n6",
+          "author": "Analyst",
+          "text": "Insufficient historical revenue data.",
+          "createdAt": "2026-05-10T08:45:00Z"
+        }
+      ]
+    },
+    {
+      "id": "app_010",
+      "submittedAt": "2026-05-10T12:35:00Z",
+      "status": "Flagged",
+      "flagged": true,
+      "applicant": {
+        "name": "Crescent Sound Ventures",
+        "type": "Independent Label",
+        "country": "US",
+        "contactEmail": "finance@crescentsound.com"
+      },
+      "ip": {
+        "catalogueSize": 300,
+        "estimatedCatalogueValue": 1400000,
+        "masterOwnership": "full",
+        "publishingOwnership": "partial",
+        "activeSyncDeals": 4,
+        "annualStreamingRevenue": 98000
+      },
+      "loanRequest": {
+        "amountRequested": 275000,
+        "term": 24,
+        "purpose": "catalogue acquisition"
+      },
+      "notes": [
+        {
+          "id": "n7",
+          "author": "Compliance",
+          "text": "Ownership documentation requires verification.",
+          "createdAt": "2026-05-11T16:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "app_011",
+      "submittedAt": "2026-05-12T08:20:00Z",
+      "status": "Pending",
+      "flagged": false,
+      "applicant": {
+        "name": "Harborlight Publishing",
+        "type": "Publisher",
+        "country": "UK",
+        "contactEmail": "funding@harborlightpublishing.co.uk"
+      },
+      "ip": {
+        "catalogueSize": 225,
+        "estimatedCatalogueValue": 980000,
+        "masterOwnership": "none",
+        "publishingOwnership": "full",
+        "activeSyncDeals": 3,
+        "annualStreamingRevenue": 71000
+      },
+      "loanRequest": {
+        "amountRequested": 160000,
+        "term": 24,
+        "purpose": "rights acquisition"
+      },
+      "notes": []
+    },
+    {
+      "id": "app_012",
+      "submittedAt": "2026-05-15T17:10:00Z",
+      "status": "Under Review",
+      "flagged": false,
+      "applicant": {
+        "name": "Sunset Frequency Group",
+        "type": "Rights Management",
+        "country": "Netherlands",
+        "contactEmail": "finance@sunsetfrequency.nl"
+      },
+      "ip": {
+        "catalogueSize": 670,
+        "estimatedCatalogueValue": 4100000,
+        "masterOwnership": "full",
+        "publishingOwnership": "co-publish",
+        "activeSyncDeals": 9,
+        "annualStreamingRevenue": 295000
+      },
+      "loanRequest": {
+        "amountRequested": 420000,
+        "term": 36,
+        "purpose": "catalogue acquisition"
+      },
+      "notes": [
+        {
+          "id": "n8",
+          "author": "Analyst",
+          "text": "Financials reviewed, awaiting final committee decision.",
+          "createdAt": "2026-05-18T09:30:00Z"
+        }
+      ]
+    }
+  ]
+}
