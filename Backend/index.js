@@ -18,7 +18,9 @@ app.get("/api/applications", async (req, res) => {
   try {
     const fileData = await readFile("./db.json", "utf8");
     const data = JSON.parse(fileData);
-    res.json(data.applications);
+    setTimeout(() => {
+      res.json(data.applications);
+    }, 1500)
   } catch (error) {
     if (error.code === "ENOENT") {
       res.status(404).send("File not found");

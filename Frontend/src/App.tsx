@@ -1,32 +1,33 @@
-import { useEffect, useState } from "react"
-import { cn } from "./lib/utils"
-import type { Application } from "./types";
-
+import { cn } from "./lib/utils";
+import {
+  useQuery,
+  // useMutation,
+  // useQueryClient,
+} from "@tanstack/react-query";
+import { fetchData } from "./lib/api";
 
 function App() {
-  const [apps, setApps] = useState<Application[]>()
-  const [loading, setLoading] = useState<boolean>(false)
+  const result = useQuery({
+    queryKey: ["applications"],
+    queryFn: fetchData,
+  });
 
-  useEffect(() => {
-    async function fetchData() {
-      setLoading(true)
-      const res = await fetch("http://localhost:3000/api/applications");
-      const data = await res.json()
-      console.log(data)
-      setApps(data)
-      setLoading(false)
-    }
-
-    fetchData()
-  },[])
+  const { data, isLoading, isError, error } = result;
 
   return (
-    <div className={cn(
-        "h-screen flex items-center justify-center bg-black text-white text-2xl"
-      )}>
-      <p>Template Ready</p>
+    <div
+      className={cn(
+        "min-h-screen bg-black text-white text-sm",
+      )}
+    >
+      {isLoading ? (
+        <p>Loading...</p>
+      ) : (
+        data?.map((app) => <div key={app.id}>{app.id}: {app.applicant.name}</div>)
+      )
+      }
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
