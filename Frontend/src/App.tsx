@@ -4,12 +4,13 @@ import {
   // useMutation,
   // useQueryClient,
 } from "@tanstack/react-query";
-import { fetchData } from "./lib/api";
+import { fetchApplications } from "./lib/api";
+import AppCard from "./components/AppCard";
 
 function App() {
   const result = useQuery({
     queryKey: ["applications"],
-    queryFn: fetchData,
+    queryFn: fetchApplications,
   });
 
   const { data, isLoading, isError, error } = result;
@@ -23,9 +24,15 @@ function App() {
       {isLoading ? (
         <p>Loading...</p>
       ) : (
-        data?.map((app) => <div key={app.id}>{app.id}: {app.applicant.name}</div>)
+        isError ?
+          <div>{error.message}</div> :
+          data?.map((app) => <div key={app.id}>{app.id}: {app.applicant.name}</div>)
+        
       )
       }
+      <div>
+        <AppCard id={"app_012"} />
+      </div>
     </div>
   );
 }

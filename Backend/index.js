@@ -20,12 +20,16 @@ app.get("/api/applications", async (req, res) => {
     const data = JSON.parse(fileData);
     setTimeout(() => {
       res.json(data.applications);
-    }, 1500)
+    }, 1500);
   } catch (error) {
     if (error.code === "ENOENT") {
-      res.status(404).send("File not found");
+      res.status(404).json({
+        message: "404: File not found",
+      });
     } else {
-      res.status(500).send("Server Error");
+      res.status(500).json({
+        message: "500: Server Error",
+      });
     }
   }
 });
@@ -37,15 +41,23 @@ app.get("/api/applications/:id", async (req, res) => {
     const data = JSON.parse(fileData);
     const searchedApp = data.applications.find((app) => app.id === id);
     if (!searchedApp) {
-      res.status(404).send("Application not found");
+      res.status(404).json({
+        message: "404: Application not found",
+      });
       return;
     }
-    res.json(searchedApp);
-  } catch {
+    setTimeout(() => {
+      res.json(searchedApp);
+    }, 1500);
+  } catch (error) {
     if (error.code === "ENOENT") {
-      res.status(404).send("File not found");
+      res.status(404).json({
+        message: "404: File not found",
+      });
     } else {
-      res.status(500).send("Server Error");
+      res.status(500).json({
+        message: "500: Server Error",
+      });
     }
   }
 });
