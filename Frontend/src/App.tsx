@@ -1,40 +1,38 @@
 import { cn } from "./lib/utils";
-import {
-  useQuery,
-  // useMutation,
-  // useQueryClient,
-} from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { fetchApplications } from "./lib/api";
-import AppCard from "./components/AppCard";
+import Nav from "./components/Nav";
+import { AppTable } from "./components/AppTable";
+import TopSection from "./components/TopSection";
+
+// import AppCard from "./components/AppCard";
 
 function App() {
-  const result = useQuery({
+  const { data, isLoading, isError, error } = useQuery({
     queryKey: ["applications"],
     queryFn: fetchApplications,
   });
 
-  const { data, isLoading, isError, error } = result;
-
   return (
     <div
       className={cn(
-        "min-h-screen bg-black text-white text-sm",
+        "min-h-screen h-screen bg-[#F1EFE8] pt-12 pb-12 flex relative",
       )}
     >
-      {isLoading ? (
-        <p>Loading...</p>
-      ) : (
-        isError ?
-          <div>{error.message}</div> :
-          data?.map((app) => <div key={app.id}>{app.id}: {app.applicant.name}</div>)
-        
-      )
-      }
-      <div>
-        <AppCard id={"app_012"} />
+      <Nav />
+      <div className="w-[90%] max-w-325 h-full mx-auto pt-6 pb-4 flex flex-col">
+        {data && <TopSection data={data} />}
+        {isLoading ? (
+          <p>Loading...</p>
+        ) : isError ? (
+          <div>{error.message}</div>
+        ) : (
+          data && <AppTable data={data} />
+        )}
       </div>
     </div>
   );
 }
 
 export default App;
+
