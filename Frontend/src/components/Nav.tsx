@@ -15,13 +15,6 @@ export default function Nav() {
           <span className="text-[#5F5E5A]">/ Funding Review</span>
         </div>
       </div>
-      <div>
-        <input
-          type="text"
-          placeholder="Search Applicants..."
-          className="border border-[#D3D1C7] bg-[#F1EFE8] rounded-[10px] p-2 text-xs outline-0"
-        />
-      </div>
       </div>
     </div>
   );

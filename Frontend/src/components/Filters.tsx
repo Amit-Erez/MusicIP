@@ -1,0 +1,111 @@
+import type { Filter, Sort } from "@/types";
+import { useState } from "react";
+
+export default function Filters({
+  sort,
+  setSort,
+  query,
+  setQuery,
+  filters,
+  editFilters,
+}: {
+  sort: Sort;
+  setSort: (sort: Sort) => void;
+  query: string;
+  setQuery: (query: string) => void;
+  filters: Filter[];
+  editFilters: (filter: Filter) => void;
+}) {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+
+  return (
+    <div className="flex w-full min-h-10 pb-4 items-center justify-end">
+      <div>
+        <input
+          type="text"
+          placeholder="Search Applicants..."
+          value={query}
+          className="border border-[#D3D1C7] bg-[#F1EFE8] rounded-[10px] h-10 mr-2 p-2 text-sm outline-0"
+        onChange={(e) => setQuery(e.target.value)}
+        />
+      </div>
+      <div className="relative">
+        <div
+          className="relative h-10 border p-1.5 mr-2 rounded-[10px] cursor-pointer hover:bg-white transition-colors"
+          onClick={() => setIsOpen((prev) => !prev)}
+        >
+          Open Filters
+        </div>
+        {isOpen && (
+          <div className="absolute top-10 right-0 w-38 flex flex-col p-2 z-10 bg-white rounded-[8px] border">
+            <div>
+              <input
+                type="checkbox"
+                id="Approved"
+                name="Approved"
+                checked={filters.includes("Approved")}
+                onChange={() => {
+                  editFilters("Approved");
+                }}
+              />
+              <label htmlFor="Approved" className="ml-2 mr-1 cursor-pointer">
+                Approved
+              </label>
+            </div>
+            <div>
+              <input
+                type="checkbox"
+                id="Under-Review"
+                name="Under-Review"
+                checked={filters.includes("Under Review")}
+                onChange={() => editFilters("Under Review")}
+              />
+              <label
+                htmlFor="Under-Review"
+                className="ml-2 mr-1 cursor-pointer"
+              >
+                Under Review
+              </label>
+            </div>
+            <div>
+              <input
+                type="checkbox"
+                id="Pending"
+                name="Pending"
+                checked={filters.includes("Pending")}
+                onChange={() => editFilters("Pending")}
+              />
+              <label htmlFor="Pending" className="ml-2 mr-1 cursor-pointer">
+                Pending
+              </label>
+            </div>
+            <div>
+              <input
+                type="checkbox"
+                id="Declined"
+                name="Declined"
+                checked={filters.includes("Declined")}
+                onChange={() => editFilters("Declined")}
+              />
+              <label htmlFor="Declined" className="ml-2 mr-1 cursor-pointer">
+                Declined
+              </label>
+            </div>
+          </div>
+        )}
+      </div>
+      <select
+        name="sort"
+        id="sort"
+        value={sort}
+        onChange={(e) => setSort(e.target.value as Sort)}
+        className="h-8 outline-0"
+      >
+        <option value="dateAsc">By Date Asc</option>
+        <option value="dateDesc">By Date Desc</option>
+        <option value="loanAsc">By Loan Asc</option>
+        <option value="loanDesc">By Loan Desc</option>
+      </select>
+    </div>
+  );
+}

@@ -12,9 +12,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faFlag as faFlag } from "@fortawesome/free-regular-svg-icons";
 import { faFlag as faFlagFull } from "@fortawesome/free-solid-svg-icons";
+
 library.add(faFlag, faFlagFull);
 
-export function AppTable({ data }: { data: Application[] }) {
+export function AppTable({ sortedApps }: {sortedApps: Application[]}) {
   return (
     <div className="flex border rounded-lg overflow-hidden">
       <Table>
@@ -29,7 +30,7 @@ export function AppTable({ data }: { data: Application[] }) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data?.map((app) => (
+          {sortedApps?.map((app) => (
             <TableRow
               key={app.id}
               className="cursor-pointer bg-[#FFFFFF] hover:bg-[#F1EFE8]"
@@ -38,14 +39,16 @@ export function AppTable({ data }: { data: Application[] }) {
                 {app.applicant.name}
               </TableCell>
               <TableCell>
-                <span className={`pill ${pillColor(app.applicant.type)} p-1`}>
+                <span className={`${pillColor(app.applicant.type)} p-1`}>
                   {app.applicant.type}
                 </span>
               </TableCell>
               <TableCell>
                 ${app.loanRequest.amountRequested.toLocaleString("en-US")}
               </TableCell>
-              <TableCell className="text-right">{app.status}</TableCell>
+              <TableCell className="text-right"><span className={`pill ${pillColor(app.status)}`}>
+                {app.status}
+                </span></TableCell>
               <TableCell className="text-right">
                 {!app.flagged ? (
                   <FontAwesomeIcon icon={faFlag} />

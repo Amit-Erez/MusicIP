@@ -13,8 +13,8 @@ export default function TopSection({ data }: { data: Application[]}) {
         Review and manage submitted applications from labels, publishers, and
         music companies.
       </p>
-      <div className="flex flex-1 flex-wrap pt-4 pb-4 h-full">
-        <div className="grid grid-cols-4 gap-8 w-full">
+      <div className="flex pt-4 pb-4 h-full">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 w-full">
           <div className="border rounded-lg bg-[#FFFFFF] border-[#D3D1C7] p-4">
             <h2 className="text-[#5F5E5A]">TOTAL APPLICATIONS</h2>
             <div className="font-medium text-[22px]">{data.length}</div>

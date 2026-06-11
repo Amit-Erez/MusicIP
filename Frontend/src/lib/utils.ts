@@ -47,8 +47,9 @@ export function cn(...inputs: ClassValue[]) {
   }
 
   export function pillColor(appType: string): string {
-    if(appType === "Independent Label") return "indie"
+    if(appType === "Independent Label" || appType === "Approved") return "indie"
+    if(appType === "Rights Management" || appType === "Under Review") return "rights"
+    if(appType === "Declined") return "dec"
     if(appType === "Publisher") return "pub"
-    if(appType === "Rights Management") return "rights"
     else return "coll"
   }

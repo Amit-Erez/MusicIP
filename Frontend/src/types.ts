@@ -3,7 +3,6 @@ export type Status =
   | "Under Review"
   | "Approved"
   | "Declined"
-  | "Flagged"
 
 export type Applicant = {
   name: string
@@ -44,3 +43,7 @@ export type Application = {
   loanRequest: LoanRequest
   notes: Note[]
 }
+
+export type Filter = "Approved" | "Declined" | "Pending" | "Under Review"
+
+export type Sort = "dateAsc" | "dateDesc" | "loanAsc" | "loanDesc";
