@@ -108,12 +108,12 @@ function organizeResult(
       return 0;
     });
   const maxPages = Math.max(1, Math.ceil(organizedData.length / limitPerPage))
-  const compedPage = Math.min(pageNum, maxPages)
-  const start = (compedPage - 1) * limitPerPage
+  const clampedPage = Math.min(pageNum, maxPages)
+  const start = (clampedPage - 1) * limitPerPage
   const end = start + limitPerPage;
   return {
   applications: organizedData.slice(start, end),
-  page: compedPage,
+  page: clampedPage,
   maxPages,
   totalResults: organizedData.length,
 };

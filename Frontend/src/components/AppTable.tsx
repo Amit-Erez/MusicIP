@@ -13,20 +13,21 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import { faFlag as faFlag } from "@fortawesome/free-regular-svg-icons";
 import { faFlag as faFlagFull } from "@fortawesome/free-solid-svg-icons";
 
+
 library.add(faFlag, faFlagFull);
 
 export function AppTable({ result }: {result: Result}) {
   return (
     <div className="flex border rounded-lg overflow-hidden">
-      <Table>
+      <Table className="text-[#2C2C2A]">
         <TableHeader>
           <TableRow>
-            <TableHead className="w-80">APPLICANT</TableHead>
-            <TableHead>TYPE</TableHead>
-            <TableHead>LOAN AMOUNT</TableHead>
-            <TableHead className="text-right w-20">STATUS</TableHead>
-            <TableHead className="text-right">FLAG</TableHead>
-            <TableHead className="text-right w-50">SUBMITTED</TableHead>
+            <TableHead className="w-80 text-[#2C2C2A]">APPLICANT</TableHead>
+            <TableHead className="text-[#2C2C2A]">TYPE</TableHead>
+            <TableHead className="text-[#2C2C2A]">LOAN AMOUNT</TableHead>
+            <TableHead className="text-right w-20 text-[#2C2C2A]">STATUS</TableHead>
+            <TableHead className="text-right text-[#2C2C2A]">FLAG</TableHead>
+            <TableHead className="text-right w-50 text-[#2C2C2A]">SUBMITTED</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -39,7 +40,7 @@ export function AppTable({ result }: {result: Result}) {
                 {app.applicant.name}
               </TableCell>
               <TableCell>
-                <span className={`${pillColor(app.applicant.type)} p-1`}>
+                <span className="p-1">
                   {app.applicant.type}
                 </span>
               </TableCell>

@@ -16,11 +16,11 @@ export async function fetchApplications({
 
   const params = new URLSearchParams();
   params.append("sort", sort);
-  params.append("query", dbQuery);
+  params.append("dbQuery", dbQuery);
   params.append("page", page.toString());
   params.append("limit", limit.toString())
   filters.forEach((filter) => {
-    params.append("filter", filter);
+    params.append("filters", filter);
   });
 
   const res = await fetch(`http://localhost:3000/api/applications?${params}`);
