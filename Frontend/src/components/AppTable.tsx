@@ -7,7 +7,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { formatDate, pillColor } from "@/lib/utils";
-import type { Application } from "@/types";
+import type { Application, Result } from "@/types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faFlag as faFlag } from "@fortawesome/free-regular-svg-icons";
@@ -15,7 +15,7 @@ import { faFlag as faFlagFull } from "@fortawesome/free-solid-svg-icons";
 
 library.add(faFlag, faFlagFull);
 
-export function AppTable({ sortedApps }: {sortedApps: Application[]}) {
+export function AppTable({ result }: {result: Result}) {
   return (
     <div className="flex border rounded-lg overflow-hidden">
       <Table>
@@ -30,7 +30,7 @@ export function AppTable({ sortedApps }: {sortedApps: Application[]}) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {sortedApps?.map((app) => (
+          {result?.applications.map((app: Application) => (
             <TableRow
               key={app.id}
               className="cursor-pointer bg-[#FFFFFF] hover:bg-[#F1EFE8]"

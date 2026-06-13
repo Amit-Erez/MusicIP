@@ -15,11 +15,30 @@ app.listen(PORT, () => {
 });
 
 app.get("/api/applications", async (req, res) => {
+  const { filters, sort, dbQuery, page, limit } = req.query;
+  const searchQuery = typeof dbQuery === "string" ? dbQuery : "";
+  const pageNum = Number(page) || 1;
+  const limitPerPage = Number(limit) || 8;
+  const selectedFilters = Array.isArray(filters)
+    ? filters
+    : filters
+      ? [filters]
+      : [];
+
   try {
     const fileData = await readFile("./db.json", "utf8");
     const data = JSON.parse(fileData);
+    const appArr = data.applications;
+    const result = organizeResult(appArr, {
+      searchQuery,
+      selectedFilters,
+      pageNum,
+      limitPerPage,
+      sort,
+    });
+
     setTimeout(() => {
-      res.json(data.applications);
+      res.status(200).json(result);
     }, 1500);
   } catch (error) {
     if (error.code === "ENOENT") {
@@ -61,3 +80,41 @@ app.get("/api/applications/:id", async (req, res) => {
     }
   }
 });
+
+function organizeResult(
+  applications,
+  { searchQuery, selectedFilters, pageNum, limitPerPage, sort },
+) {
+  const organizedData = [...applications]
+    .filter((app) =>
+      app.applicant.name
+        .toLowerCase()
+        .includes(searchQuery.trim().toLowerCase()),
+    )
+    .filter((app) =>
+      selectedFilters.length === 0
+        ? true
+        : selectedFilters.includes(app.status),
+    )
+    .sort((a, b) => {
+      const dateA = a.submittedAt.slice(0, 10);
+      const dateB = b.submittedAt.slice(0, 10);
+      const loanA = a.loanRequest.amountRequested;
+      const loanB = b.loanRequest.amountRequested;
+      if (sort === "dateAsc") return dateA.localeCompare(dateB);
+      if (sort === "dateDesc") return dateB.localeCompare(dateA);
+      if (sort === "loanAsc") return loanA - loanB;
+      if (sort === "loanDesc") return loanB - loanA;
+      return 0;
+    });
+  const maxPages = Math.max(1, Math.ceil(organizedData.length / limitPerPage))
+  const compedPage = Math.min(pageNum, maxPages)
+  const start = (compedPage - 1) * limitPerPage
+  const end = start + limitPerPage;
+  return {
+  applications: organizedData.slice(start, end),
+  page: compedPage,
+  maxPages,
+  totalResults: organizedData.length,
+};
+}

@@ -6,15 +6,22 @@ import { AppTable } from "./components/AppTable";
 import TopSection from "./components/TopSection";
 import Filters from "./components/Filters";
 import { useEffect, useState } from "react";
-import type { Application, Filter, Sort } from "./types";
+import type { Filter, Sort } from "./types";
 
 // import AppCard from "./components/AppCard";
 
 function App() {
   const [sort, setSort] = useState<Sort>("dateAsc");
   const [filters, setFilters] = useState<Filter[]>([]);
-  const [query, setQuery] = useState<string>("");
+  const [page, setPage] = useState<number>(1)
+  const [limit, setLimit] = useState<number>(8)
   const [dbQuery, setDbQuery] = useState<string>("");
+  const [query, setQuery] = useState<string>("");
+
+  const { data: result, isLoading, isError, error } = useQuery({
+  queryKey: ["applications", {filters, sort, dbQuery, page, limit}],
+  queryFn: () => fetchApplications({filters, sort, dbQuery, page, limit}),
+  });
 
   useEffect(() => {
     const timerId = setTimeout(() => {
@@ -33,41 +40,11 @@ function App() {
     );
   }
 
-  const { data, isLoading, isError, error } = useQuery({
-    queryKey: ["applications"],
-    queryFn: fetchApplications,
-  });
-
-  const searchedData: Application[] | undefined = data?.filter((app) =>
-    app.applicant.name.toLowerCase().includes(dbQuery.trim().toLowerCase()),
-  );
-
-  // *** deriving new filtered applications array *** //
-  const filteredData: Application[] | undefined =
-    filters.length === 0
-      ? searchedData
-      : searchedData?.filter((app) => filters.includes(app.status));
-
-  // *** sorting filtered array by sort value *** //
-  const sortedApps = filteredData
-    ? [...filteredData].sort((a, b) => {
-        const dateA = a.submittedAt.slice(0, 10);
-        const dateB = b.submittedAt.slice(0, 10);
-        const loanA = a.loanRequest.amountRequested;
-        const loanB = b.loanRequest.amountRequested;
-        if (sort === "dateAsc") return dateA.localeCompare(dateB);
-        if (sort === "dateDesc") return dateB.localeCompare(dateA);
-        if (sort === "loanAsc") return loanA - loanB;
-        if (sort === "loanDesc") return loanB - loanA;
-        return 0;
-      })
-    : undefined;
-
   return (
     <div className={cn("min-h-screen  bg-[#F1EFE8] pt-12 pb-12 flex relative")}>
       <Nav />
       <div className="w-[90%] max-w-325 h-full mx-auto pt-6 pb-4 flex flex-col">
-        {data && <TopSection data={data} />}
+        {result && <TopSection result={result} />}
         <Filters
           sort={sort}
           setSort={setSort}
@@ -81,7 +58,7 @@ function App() {
         ) : isError ? (
           <div>{error.message}</div>
         ) : (
-          sortedApps && <AppTable sortedApps={sortedApps} />
+          result && <AppTable result={result} />
         )}
       </div>
     </div>

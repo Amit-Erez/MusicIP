@@ -44,6 +44,13 @@ export type Application = {
   notes: Note[]
 }
 
+export type Result = {
+  applications: Application[]
+  page: number
+  maxPages: number
+  totalResults: number,
+}
+
 export type Filter = "Approved" | "Declined" | "Pending" | "Under Review"
 
 export type Sort = "dateAsc" | "dateDesc" | "loanAsc" | "loanDesc";
