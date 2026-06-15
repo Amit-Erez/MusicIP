@@ -47,6 +47,19 @@
   border: solid 1px #EF5350;
 }
 
+.fadeIn {
+  animation: fadeIn 200ms ease-in
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1
+  }
+}
+
 @theme inline {
     --font-heading: var(--font-sans);
     --font-sans: 'Inter Variable', sans-serif;

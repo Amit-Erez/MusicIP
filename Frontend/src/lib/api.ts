@@ -39,3 +39,20 @@ export async function fetchApp(id: string): Promise<Application> {
   }
   return data;
 }
+
+
+export async function toggleFlag(id: string, flagged: boolean) {
+const res = await fetch(`http://localhost:3000/api/applications/${id}`, {
+  method: "PATCH",
+  headers: {"Content-Type": "application/json"},
+  body: JSON.stringify({flagged})
+})
+
+if(!res.ok) {
+  const error = await res.json()
+  throw new Error(error.message)
+}
+
+return res.json();
+
+}

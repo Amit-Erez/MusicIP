@@ -11,34 +11,51 @@ import type { Application, Result } from "@/types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faFlag as faFlag } from "@fortawesome/free-regular-svg-icons";
-import { faCircleNotch, faFlag as faFlagFull } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCircleNotch,
+  faFlag as faFlagFull,
+} from "@fortawesome/free-solid-svg-icons";
+import { useState } from "react";
 
 library.add(faFlag, faFlagFull);
 
 export function AppTable({
   result,
   isLoading,
+  isFetching,
+  handleToggleFlag,
 }: {
   result: Result | undefined;
   isLoading: boolean;
+  isFetching: boolean;
+  handleToggleFlag: (id: string, flagged: boolean) => void;
 }) {
+  const [flagLoad, setFlagLoad] = useState<string | null>(null);
+
+  function handleFlagLoad(id: string) {
+    setFlagLoad(id);
+  }
+
   if (isLoading && !result) {
     return (
       <div className="flex items-center justify-center border rounded-lg overflow-hidden h-[411.5px] bg-gray-300 animate-pulse">
-        <FontAwesomeIcon icon={faCircleNotch}  className="text-4xl text-[#2C2C2A] animate-spin"/>
+        <FontAwesomeIcon
+          icon={faCircleNotch}
+          className="text-4xl text-[#2C2C2A] animate-spin"
+        />
       </div>
     );
   }
 
   if (result && result.applications.length === 0) {
     return (
-      <div className="flex justify-center border rounded-lg overflow-hidden h-[411.5px] bg-gray-300 p-4">
+      <div className="flex justify-center border rounded-lg overflow-hidden h-[411.5px] bg-gray-300 p-4 fadeIn">
         <h1>No results found</h1>
       </div>
     );
   }
 
-  if(!result) return null 
+  if (!result) return null;
 
   return (
     <div className="flex border rounded-lg overflow-hidden">
@@ -78,11 +95,24 @@ export function AppTable({
                 </span>
               </TableCell>
               <TableCell className="text-right">
-                {!app.flagged ? (
-                  <FontAwesomeIcon icon={faFlag} />
-                ) : (
-                  <FontAwesomeIcon icon={faFlagFull} />
-                )}
+                <div
+                  className="relative"
+                  onClick={() => {
+                    handleFlagLoad(app.id);
+                    handleToggleFlag(app.id, !app.flagged);
+                  }}
+                >
+                  {flagLoad === app.id && isFetching === true ? (
+                    <FontAwesomeIcon
+                      icon={faCircleNotch}
+                      className="left-8 top-0.5 text-[#2C2C2A] animate-spin"
+                    />
+                  ) : !app.flagged ? (
+                    <FontAwesomeIcon icon={faFlag} />
+                  ) : (
+                    <FontAwesomeIcon icon={faFlagFull} />
+                  )}
+                </div>
               </TableCell>
               <TableCell className="text-right">
                 {formatDate(app.submittedAt)}

@@ -1,6 +1,6 @@
 import express from "express";
 import morgan from "morgan";
-import { readFile } from "fs/promises";
+import { readFile, writeFile } from "fs/promises";
 import cors from "cors";
 
 const app = express();
@@ -107,14 +107,52 @@ function organizeResult(
       if (sort === "loanDesc") return loanB - loanA;
       return 0;
     });
-  const maxPages = Math.max(1, Math.ceil(organizedData.length / limitPerPage))
-  const clampedPage = Math.min(pageNum, maxPages)
-  const start = (clampedPage - 1) * limitPerPage
+  const maxPages = Math.max(1, Math.ceil(organizedData.length / limitPerPage));
+  const clampedPage = Math.min(pageNum, maxPages);
+  const start = (clampedPage - 1) * limitPerPage;
   const end = start + limitPerPage;
   return {
-  applications: organizedData.slice(start, end),
-  page: clampedPage,
-  maxPages,
-  totalResults: organizedData.length,
-};
+    applications: organizedData.slice(start, end),
+    page: clampedPage,
+    maxPages,
+    totalResults: organizedData.length,
+  };
 }
+
+app.patch("/api/applications/:id", async (req, res) => {
+  const id = req.params.id;
+  try {
+    const fileData = await readFile("./db.json", "utf8");
+    console.log("file read");
+
+    const data = JSON.parse(fileData);
+    console.log("json parsed");
+
+    const searchedApp = data.applications.find((app) => app.id === id);
+    console.log("found app:", searchedApp);
+
+    if (!searchedApp) {
+      return res.status(404).json({
+        message: "Application not found",
+      });
+    }
+      searchedApp.flagged = req.body.flagged;
+      console.log("flag changed");
+
+      await writeFile("./db.json", JSON.stringify(data, null, 2));
+      console.log("file written");
+
+      console.log(searchedApp)
+      return res.json(searchedApp);
+  } catch (error) {
+    if (error.code === "ENOENT") {
+      res.status(404).json({
+        message: "404: File not found",
+      });
+    } else {
+      res.status(500).json({
+        message: "500: Server Error",
+      });
+    }
+  }
+});

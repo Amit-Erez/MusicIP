@@ -1,6 +1,6 @@
 import { cn } from "./lib/utils";
-import { useQuery } from "@tanstack/react-query";
-import { fetchApplications } from "./lib/api";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { fetchApplications, toggleFlag } from "./lib/api";
 import Nav from "./components/Nav";
 import { AppTable } from "./components/AppTable";
 import TopSection from "./components/TopSection";
@@ -30,6 +30,20 @@ function App() {
     placeholderData: (previousData) => previousData,
   });
 
+  const queryClient = useQueryClient();
+  const flagMutation  = useMutation({
+    mutationFn: ({id, flagged}: {id: string; flagged: boolean}) => toggleFlag(id, flagged),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["applications"]
+      })
+    }
+  })
+
+  function handleToggleFlag(id: string, flagged: boolean) {
+    flagMutation.mutate({id, flagged})
+  }
+
   useEffect(() => {
     const timerId = setTimeout(() => {
       setDbQuery(query);
@@ -51,7 +65,7 @@ function App() {
   return (
     <div className={cn("min-h-screen  bg-[#F1EFE8] pt-12 pb-12 flex relative")}>
       <Nav />
-      <div className="w-[90%] max-w-325 h-full mx-auto pt-6 pb-4 flex flex-col">
+      <div className="w-[90%] max-w-325 h-full mx-auto pt-6 pb-4 flex flex-col fadeIn">
         <TopSection isLoading={isLoading} result={result} />
         <Filters
           limit={limit}
@@ -66,7 +80,7 @@ function App() {
         {isError ? (
           <div>{error.message}</div>
         ) : (
-          <AppTable result={result} isLoading={isLoading} />
+          <AppTable result={result} isLoading={isLoading} handleToggleFlag={handleToggleFlag} isFetching={isFetching} />
         )}
         <div className="flex p-2 justify-end items-center text-[#2C2C2A]">
           {isFetching && !isLoading && (

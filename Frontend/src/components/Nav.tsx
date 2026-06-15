@@ -3,7 +3,7 @@ import { faMusic } from "@fortawesome/free-solid-svg-icons";
 
 export default function Nav() {
   return (
-    <div className="h-12 w-full flex fixed top-0 pl-16 pr-16 items-center justify-between bg-[#FFFFFF] border-b border-[#D3D1C7]">
+    <div className="h-12 w-full flex fixed top-0 pl-16 pr-16 items-center justify-between bg-[#FFFFFF] border-b border-[#D3D1C7] fadeIn">
       <div className="flex justify-between w-full max-w-325 mx-auto">
 
       <div className="flex items-center justify-center">

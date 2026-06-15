@@ -280,7 +280,7 @@
       "id": "app_010",
       "submittedAt": "2026-05-10T12:35:00Z",
       "status": "Under Review",
-      "flagged": true,
+      "flagged": false,
       "applicant": {
         "name": "Crescent Sound Ventures",
         "type": "Independent Label",
