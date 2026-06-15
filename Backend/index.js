@@ -39,7 +39,7 @@ app.get("/api/applications", async (req, res) => {
 
     setTimeout(() => {
       res.status(200).json(result);
-    }, 1500);
+    }, 500);
   } catch (error) {
     if (error.code === "ENOENT") {
       res.status(404).json({

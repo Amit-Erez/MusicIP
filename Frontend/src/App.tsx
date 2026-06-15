@@ -10,13 +10,11 @@ import type { Filter, Sort } from "./types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
 
-// import AppCard from "./components/AppCard";
-
 function App() {
   const [sort, setSort] = useState<Sort>("dateAsc");
   const [filters, setFilters] = useState<Filter[]>([]);
   const [page, setPage] = useState<number>(1);
-  const [limit, setLimit] = useState<number>(12);
+  const [limit, setLimit] = useState<number>(10);
   const [dbQuery, setDbQuery] = useState<string>("");
   const [query, setQuery] = useState<string>("");
 
@@ -29,6 +27,7 @@ function App() {
   } = useQuery({
     queryKey: ["applications", { filters, sort, dbQuery, page, limit }],
     queryFn: () => fetchApplications({ filters, sort, dbQuery, page, limit }),
+    placeholderData: (previousData) => previousData,
   });
 
   useEffect(() => {
@@ -53,8 +52,10 @@ function App() {
     <div className={cn("min-h-screen  bg-[#F1EFE8] pt-12 pb-12 flex relative")}>
       <Nav />
       <div className="w-[90%] max-w-325 h-full mx-auto pt-6 pb-4 flex flex-col">
-        {result && <TopSection result={result} />}
+        <TopSection isLoading={isLoading} result={result} />
         <Filters
+          limit={limit}
+          setLimit={setLimit}
           sort={sort}
           setSort={setSort}
           editFilters={editFilters}
@@ -62,27 +63,34 @@ function App() {
           query={query}
           setQuery={setQuery}
         />
-        {isLoading ? (
-          <p>Loading...</p>
-        ) : isError ? (
+        {isError ? (
           <div>{error.message}</div>
         ) : (
-          result && <AppTable result={result} />
+          <AppTable result={result} isLoading={isLoading} />
         )}
-        <div className="flex p-2 border justify-end items-center text-[#2C2C2A]">
-          <FontAwesomeIcon
-            icon={faAngleLeft}
-            className={`mr-2 text-[18px] transition-opacity ${page === 1 ? "opacity-60 cursor-auto" : "cursor-pointer hover:opacity-60"}`}
-            onClick={() => setPage(prev => Math.max(1, prev - 1))}
-          />
-          <p className="text-[14px]">
-            Showing page {result?.page} of {result?.maxPages}
-          </p>
-          <FontAwesomeIcon
-            icon={faAngleRight}
-            className={`ml-2 text-[18px] transition-opacity ${page === result?.maxPages ? "opacity-60 cursor-auto" : "cursor-pointer hover:opacity-60"}`}
-            onClick={() => setPage(prev => Math.min(result!.maxPages, prev + 1))}
-          />
+        <div className="flex p-2 justify-end items-center text-[#2C2C2A]">
+          {isFetching && !isLoading && (
+            <p className="mr-4 text-sm opacity-60">Updating...</p>
+          )}
+          {result && result.applications.length !== 0 ? (
+            <>
+              <FontAwesomeIcon
+                icon={faAngleLeft}
+                className={`mr-2 text-[18px] transition-opacity ${page === 1 ? "opacity-60 cursor-auto" : "cursor-pointer hover:opacity-60"}`}
+                onClick={() => setPage((prev) => Math.max(1, prev - 1))}
+              />
+              <p className="text-[14px]">
+                Showing page {result.page} of {result.maxPages}
+              </p>
+              <FontAwesomeIcon
+                icon={faAngleRight}
+                className={`ml-2 text-[18px] transition-opacity ${page === result.maxPages ? "opacity-60 cursor-auto" : "cursor-pointer hover:opacity-60"}`}
+                onClick={() =>
+                  setPage((prev) => Math.min(result.maxPages, prev + 1))
+                }
+              />
+            </>
+          ): null}
         </div>
       </div>
     </div>
