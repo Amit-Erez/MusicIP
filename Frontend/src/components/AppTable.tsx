@@ -15,26 +15,26 @@ import {
   faCircleNotch,
   faFlag as faFlagFull,
 } from "@fortawesome/free-solid-svg-icons";
-import { useState } from "react";
 
 library.add(faFlag, faFlagFull);
 
 export function AppTable({
   result,
   isLoading,
-  isFetching,
+  // isFetching,
+  setId,
+  setSheetOpen,
   handleToggleFlag,
+  handleFlagLoad,
 }: {
   result: Result | undefined;
   isLoading: boolean;
   isFetching: boolean;
+  setId: (id: string) => void;
+  setSheetOpen: (sheetOpen: boolean) => void;
+  handleFlagLoad: (id: string) => void;
   handleToggleFlag: (id: string, flagged: boolean) => void;
 }) {
-  const [flagLoad, setFlagLoad] = useState<string | null>(null);
-
-  function handleFlagLoad(id: string) {
-    setFlagLoad(id);
-  }
 
   if (isLoading && !result) {
     return (
@@ -79,6 +79,10 @@ export function AppTable({
             <TableRow
               key={app.id}
               className="cursor-pointer bg-[#FFFFFF] hover:bg-[#F1EFE8]"
+              onClick={() => {
+                setId(app.id);
+                setSheetOpen(true);
+              }}
             >
               <TableCell className="font-medium">
                 {app.applicant.name}
@@ -97,17 +101,13 @@ export function AppTable({
               <TableCell className="text-right">
                 <div
                   className="relative"
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.stopPropagation();
                     handleFlagLoad(app.id);
                     handleToggleFlag(app.id, !app.flagged);
                   }}
                 >
-                  {flagLoad === app.id && isFetching === true ? (
-                    <FontAwesomeIcon
-                      icon={faCircleNotch}
-                      className="left-8 top-0.5 text-[#2C2C2A] animate-spin"
-                    />
-                  ) : !app.flagged ? (
+                  {!app.flagged ? (
                     <FontAwesomeIcon icon={faFlag} />
                   ) : (
                     <FontAwesomeIcon icon={faFlagFull} />

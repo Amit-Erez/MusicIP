@@ -6,9 +6,10 @@ import { AppTable } from "./components/AppTable";
 import TopSection from "./components/TopSection";
 import Filters from "./components/Filters";
 import { useEffect, useState } from "react";
-import type { Filter, Sort } from "./types";
+import type { Application, Filter, Result, Sort, Status } from "./types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
+import AppCard from "./components/AppCard";
 
 function App() {
   const [sort, setSort] = useState<Sort>("dateAsc");
@@ -17,6 +18,14 @@ function App() {
   const [limit, setLimit] = useState<number>(10);
   const [dbQuery, setDbQuery] = useState<string>("");
   const [query, setQuery] = useState<string>("");
+  const [sheetOpen, setSheetOpen] = useState<boolean>(false);
+  const [id, setId] = useState<string>("");
+  const [flagLoad, setFlagLoad] = useState<string>("");
+  const [appStatus, setAppStatus] = useState<Status | null>(null)
+
+  function handleFlagLoad(id: string) {
+    setFlagLoad(id);
+  }
 
   const {
     data: result,
@@ -31,17 +40,52 @@ function App() {
   });
 
   const queryClient = useQueryClient();
-  const flagMutation  = useMutation({
-    mutationFn: ({id, flagged}: {id: string; flagged: boolean}) => toggleFlag(id, flagged),
+  const flagMutation = useMutation({
+    mutationFn: ({ id, flagged }: { id: string; flagged: boolean }) =>
+    toggleFlag(id, flagged),
+    onMutate: async ({ id, flagged }) => {
+      await queryClient.cancelQueries({
+        queryKey: ["app", id],
+      });
+
+      queryClient.setQueryData(
+        ["app", id],
+        (oldApp: Application | undefined) => {
+          if (!oldApp) return oldApp;
+
+          return {
+            ...oldApp,
+            flagged,
+          };
+        },
+      );
+
+      queryClient.setQueriesData(
+  { queryKey: ["applications"] },
+  (oldResult: Result | undefined) => {
+    if (!oldResult) return oldResult;
+
+    return {
+      ...oldResult,
+      applications: oldResult.applications.map((app) =>
+        app.id === id ? { ...app, flagged } : app
+      ),
+    };
+  }
+);
+    },
+
+    
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["applications"]
-      })
-    }
-  })
+        queryKey: ["applications"],
+      });
+      queryClient.invalidateQueries({ queryKey: ["app"] });
+    },
+  });
 
   function handleToggleFlag(id: string, flagged: boolean) {
-    flagMutation.mutate({id, flagged})
+    flagMutation.mutate({ id, flagged });
   }
 
   useEffect(() => {
@@ -66,6 +110,19 @@ function App() {
     <div className={cn("min-h-screen  bg-[#F1EFE8] pt-12 pb-12 flex relative")}>
       <Nav />
       <div className="w-[90%] max-w-325 h-full mx-auto pt-6 pb-4 flex flex-col fadeIn">
+        {sheetOpen && (
+          <AppCard
+            id={id}
+            sheetOpen={sheetOpen}
+            setSheetOpen={setSheetOpen}
+            handleToggleFlag={handleToggleFlag}
+            handleFlagLoad={handleFlagLoad}
+            appStatus={appStatus}
+            setAppStatus={setAppStatus}
+            // isFetching={isFetching}
+            // flagLoad={flagLoad}
+          />
+        )}
         <TopSection isLoading={isLoading} result={result} />
         <Filters
           limit={limit}
@@ -80,7 +137,15 @@ function App() {
         {isError ? (
           <div>{error.message}</div>
         ) : (
-          <AppTable result={result} isLoading={isLoading} handleToggleFlag={handleToggleFlag} isFetching={isFetching} />
+          <AppTable
+            result={result}
+            isLoading={isLoading}
+            handleFlagLoad={handleFlagLoad}
+            handleToggleFlag={handleToggleFlag}
+            isFetching={isFetching}
+            setSheetOpen={setSheetOpen}
+            setId={setId}
+          />
         )}
         <div className="flex p-2 justify-end items-center text-[#2C2C2A]">
           {isFetching && !isLoading && (
@@ -104,7 +169,7 @@ function App() {
                 }
               />
             </>
-          ): null}
+          ) : null}
         </div>
       </div>
     </div>
