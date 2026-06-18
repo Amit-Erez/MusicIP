@@ -45,10 +45,13 @@ export type Application = {
 }
 
 export type Result = {
+  totalApps: number
+  totalFlagged: number
+  totalPending: number
   applications: Application[]
   page: number
   maxPages: number
-  totalResults: number,
+  totalResults: number
 }
 
 export type Filter = "Approved" | "Declined" | "Pending" | "Under Review"

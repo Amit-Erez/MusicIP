@@ -96,7 +96,7 @@
       "id": "app_004",
       "submittedAt": "2026-04-23T16:20:00Z",
       "status": "Pending",
-      "flagged": false,
+      "flagged": true,
       "applicant": {
         "name": "Blue Lantern Rights",
         "type": "Publisher",
@@ -339,7 +339,7 @@
       "id": "app_012",
       "submittedAt": "2026-05-15T17:10:00Z",
       "status": "Under Review",
-      "flagged": false,
+      "flagged": true,
       "applicant": {
         "name": "Sunset Frequency Group",
         "type": "Rights Management",

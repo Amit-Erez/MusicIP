@@ -74,7 +74,7 @@ export async function updateStatus(id: string, newStatus: Status) {
 }
 
 export async function addNote(id: string, message: string) {
-  const res = await fetch(`http://localhost:3000/api/applications/${id}/note`, {
+  const res = await fetch(`http://localhost:3000/api/applications/${id}/notes`, {
     method: "POST",
     headers: {"Content-Type": "application/json"},
     body: JSON.stringify({message})
@@ -83,6 +83,20 @@ export async function addNote(id: string, message: string) {
   if(!res.ok) {
     const error = await res.json()
     throw new Error(error.message)
+  }
+  setTimeout(() => {
+    return res.json()
+  }, 400)
+}
+
+export async function deleteNote(id: string, noteId: string) {
+  const res = await fetch(`http://localhost:3000/api/applications/${id}/notes/${noteId}`, {
+    method: "DELETE",
+  })
+
+  if(!res.ok) {
+  const error = await res.json()
+  throw new Error(error.message)
   }
 
   return res.json()

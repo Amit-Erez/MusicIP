@@ -45,7 +45,7 @@ app.get("/api/applications", async (req, res) => {
   } catch (error) {
     if (error.code === "ENOENT") {
       res.status(404).json({
-        message: "404: File not found",
+        message: "404: Database file not found",
       });
     } else {
       res.status(500).json({
@@ -74,7 +74,7 @@ app.get("/api/applications/:id", async (req, res) => {
   } catch (error) {
     if (error.code === "ENOENT") {
       res.status(404).json({
-        message: "404: File not found",
+        message: "404: Database file not found",
       });
     } else {
       res.status(500).json({
@@ -84,7 +84,7 @@ app.get("/api/applications/:id", async (req, res) => {
   }
 });
 
-// Helper function filtering, sorting and paginating the application list 
+// Helper function filtering, sorting and paginating the application list
 function organizeResult(
   applications,
   { searchQuery, selectedFilters, pageNum, limitPerPage, sort },
@@ -116,6 +116,9 @@ function organizeResult(
   const start = (clampedPage - 1) * limitPerPage;
   const end = start + limitPerPage;
   return {
+    totalApps: applications.length,
+    totalFlagged: applications.filter((app) => app.flagged).length,
+    totalPending: applications.filter((app) => app.status === "Pending").length,
     applications: organizedData.slice(start, end),
     page: clampedPage,
     maxPages,
@@ -123,7 +126,7 @@ function organizeResult(
   };
 }
 
-// Patch function for updating 'Flagged' 
+// Patch function for updating 'Flagged'
 app.patch("/api/applications/:id", async (req, res) => {
   const id = req.params.id;
   try {
@@ -141,18 +144,13 @@ app.patch("/api/applications/:id", async (req, res) => {
         message: "Application not found",
       });
     }
-      searchedApp.flagged = req.body.flagged;
-      console.log("flag changed");
-
-      await writeFile("./db.json", JSON.stringify(data, null, 2));
-      console.log("file written");
-
-      console.log(searchedApp)
-      return res.json(searchedApp);
+    searchedApp.flagged = req.body.flagged;
+    await writeFile("./db.json", JSON.stringify(data, null, 2));
+    return res.json(searchedApp);
   } catch (error) {
     if (error.code === "ENOENT") {
       res.status(404).json({
-        message: "404: File not found",
+        message: "404: Database file not found",
       });
     } else {
       res.status(500).json({
@@ -164,66 +162,102 @@ app.patch("/api/applications/:id", async (req, res) => {
 
 // Patch function for updating app status
 app.patch("/api/applications/:id/status", async (req, res) => {
-  const id = req.params.id
+  const id = req.params.id;
   try {
-    const fileData = await readFile("./db.json", "utf-8")
-    const data = JSON.parse(fileData)
-    const searchedApp = data.applications.find((app) => app.id === id)
+    const fileData = await readFile("./db.json", "utf-8");
+    const data = JSON.parse(fileData);
+    const searchedApp = data.applications.find((app) => app.id === id);
     if (!searchedApp) {
-     return res.status(404).json({
-      message: "File not found"
-     })
+      return res.status(404).json({
+        message: "Application not found",
+      });
     } else {
-      searchedApp.status = req.body.newStatus
-      await writeFile("./db.json", JSON.stringify(data, null, 2))
-      return res.json(searchedApp)
+      searchedApp.status = req.body.newStatus;
+      await writeFile("./db.json", JSON.stringify(data, null, 2));
+      return res.json(searchedApp);
     }
   } catch (error) {
     if (error.code === "ENONET") {
       res.status(404).json({
-        message: "404: File not found",
-      }) 
+        message: "404: Database file not found",
+      });
     } else {
       res.status(500).json({
-        message: "500: Server error"
-      })
+        message: "500: Server error",
+      });
     }
   }
-})
+});
 
-app.post("/api/applications/:id/note", async (req, res) => {
-  const id = req.params.id
-  const message = req.body.message
+app.post("/api/applications/:id/notes", async (req, res) => {
+  const id = req.params.id;
+  const message = req.body.message;
   const note = {
-      id: crypto.randomUUID(),
-      author: "Amit Erez",
-      text: message,
-      createdAt: new Date().toISOString()
-    }
+    id: crypto.randomUUID(),
+    author: "Amit Erez",
+    text: message,
+    createdAt: new Date().toISOString(),
+  };
 
   try {
-    const fileData = await readFile("./db.json", "utf-8")
-    const data = JSON.parse(fileData)
-    const searchedApp = data.applications.find((app) => app.id === id)
+    const fileData = await readFile("./db.json", "utf-8");
+    const data = JSON.parse(fileData);
+    const searchedApp = data.applications.find((app) => app.id === id);
     if (!searchedApp) {
-     return res.status(404).json({
-      message: "File not found"
-     })
+      return res.status(404).json({
+        message: "Application not found",
+      });
     } else {
-      searchedApp.notes.unshift(note)
-      await writeFile("./db.json", JSON.stringify(data, null, 2))
-      return res.status(200).json(searchedApp)
+      searchedApp.notes.unshift(note);
+      await writeFile("./db.json", JSON.stringify(data, null, 2));
+      return res.status(200).json(searchedApp);
     }
   } catch (error) {
     if (error.code === "ENONET") {
       res.status(404).json({
-        message: "404: File not found",
-      }) 
+        message: "404: Database file not found",
+      });
     } else {
       res.status(500).json({
-        message: "500: Server error"
-      })
+        message: "500: Server error",
+      });
     }
   }
+});
 
-})
+app.delete("/api/applications/:id/notes/:noteId", async (req, res) => {
+  const id = req.params.id;
+  const noteId = req.params.noteId;
+
+  try {
+    const fileData = await readFile("./db.json", "utf-8");
+    const data = JSON.parse(fileData);
+    const searchedApp = data.applications.find((app) => app.id === id);
+    if (!searchedApp) {
+      return res.status(404).json({
+        message: "Application not found",
+      });
+    } else {
+      for (let i = 0; i < searchedApp.notes.length; i++) {
+        if (searchedApp.notes[i].id === noteId) {
+          searchedApp.notes.splice(i, 1);
+          await writeFile("./db.json", JSON.stringify(data, null, 2));
+          return res.status(200).json(searchedApp);
+        }
+      }
+      return res.status(404).json({
+        message: "Note not found",
+      });
+    }
+  } catch (error) {
+    if (error.code === "ENOENT") {
+      res.status(404).json({
+        message: "404: Database file not found",
+      });
+    } else {
+      res.status(500).json({
+        message: "500: Server error",
+      });
+    }
+  }
+});

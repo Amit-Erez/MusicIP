@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { addNote, fetchApp, updateStatus } from "../lib/api";
+import { addNote, deleteNote, fetchApp, updateStatus } from "../lib/api";
 import {
   Sheet,
   // SheetClose,
@@ -41,7 +41,14 @@ export default function AppCard({
   handleFlagLoad: (id: string) => void;
   handleToggleFlag: (id: string, flagged: boolean) => void;
 }) {
-  const [message, setMessage] = useState<string>("") 
+  const [message, setMessage] = useState<string>("");
+  const [updating, setUpdating] = useState<boolean>(false)
+  const [confirmDelete, setConfirmDelete] = useState<{
+    open: boolean;
+    id: string;
+  }>({ open: false, id: "" });
+
+
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["app", id],
     queryFn: () => fetchApp(id),
@@ -51,50 +58,53 @@ export default function AppCard({
   const queryClient = useQueryClient();
 
   const notesMutation = useMutation({
-    mutationFn: ({id, message}: {id: string, message: string}) => 
-    addNote(id, message),  
+    mutationFn: ({ id, message }: { id: string; message: string }) =>
+      addNote(id, message),
 
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["app"]
-      })
+        queryKey: ["app"],
+      });
+      setTimeout(() => {
+        setUpdating(false)
+      },2200)
     },
-  })
+  });
 
   const statusMutation = useMutation({
-    mutationFn: ({id, appStatus}: {id: string; appStatus: Status}) => 
-    updateStatus(id, appStatus),
+    mutationFn: ({ id, appStatus }: { id: string; appStatus: Status }) =>
+      updateStatus(id, appStatus),
 
-    onMutate: async ({id, appStatus}) => {
+    onMutate: async ({ id, appStatus }) => {
       await queryClient.cancelQueries({
-      queryKey: ["app", id],
+        queryKey: ["app", id],
       });
 
       queryClient.setQueryData(
-        ["app", id], 
+        ["app", id],
         (oldApp: Application | undefined) => {
-          if(!oldApp) return oldApp;
+          if (!oldApp) return oldApp;
 
           return {
-            ...oldApp, 
-            status: appStatus
-          }
-        }
-      )
+            ...oldApp,
+            status: appStatus,
+          };
+        },
+      );
 
       queryClient.setQueriesData(
-       {queryKey: ["applications"]}, 
+        { queryKey: ["applications"] },
         (oldResult: Result | undefined) => {
-          if(!oldResult) return oldResult
+          if (!oldResult) return oldResult;
 
           return {
             ...oldResult,
-            applications: oldResult.applications.map((app) => 
-              app.id === id ? {...app, status: appStatus} : app,
-            )
-          }
-        }
-      )
+            applications: oldResult.applications.map((app) =>
+              app.id === id ? { ...app, status: appStatus } : app,
+            ),
+          };
+        },
+      );
     },
 
     onSuccess: () => {
@@ -102,14 +112,27 @@ export default function AppCard({
         queryKey: ["app"],
       });
       queryClient.invalidateQueries({
-      queryKey: ["applications"],
-      })
-    }
-  })
+        queryKey: ["applications"],
+      });
+    },
+  });
 
+  const deleteMutation = useMutation({
+    mutationFn: ({ id, noteId }: { id: string; noteId: string }) =>
+      deleteNote(id, noteId),
 
-  function handleStatusChange(id:string, appStatus: Status){
-    statusMutation.mutate({id, appStatus})
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["app"],
+      });
+      setTimeout(() => {
+      setUpdating(false)
+      },2200)
+    },
+  });
+
+  function handleStatusChange(id: string, appStatus: Status) {
+    statusMutation.mutate({ id, appStatus });
   }
 
   function handleSave(val: Status) {
@@ -123,16 +146,27 @@ export default function AppCard({
       setConfirmStatus(false);
     } else {
       setConfirmStatus(false);
-      handleStatusChange(id, appStatus)
+      handleStatusChange(id, appStatus);
     }
   }
 
-   function createNote(message: string){
-    if(message.trim().length === 0) return
-    notesMutation.mutate({id, message})
-    setMessage("")
+  function createNote(message: string) {
+    if (message.trim().length === 0) return;
+    setUpdating(true)
+    notesMutation.mutate({ id, message });
+    setMessage("");
   }
 
+  function handleDelete() {
+    if (!confirmDelete.id) return;
+    setUpdating(true)
+    const noteId = confirmDelete.id;
+    deleteMutation.mutate({ id, noteId });
+    setConfirmDelete((prev) => ({
+      ...prev,
+      id: "",
+    }));
+  }
 
   useEffect(() => {
     if (!data) return;
@@ -198,33 +232,62 @@ export default function AppCard({
           ) : (
             <>
               <div className="relative h-full overflow-auto no-scrollbar">
-                {appStatus && 
-                <>
-                {confirmStatus && appStatus !== data?.status ? (
-                  <div className="absolute inset-0 z-50 bg-black/20 flex justify-center p-10">
-                    <div className="bg-white rounded-lg p-4 shadow-lg h-40 w-80 text-center">
-                      You are about to change the status from "{data?.status}"
-                      to "{appStatus}".
-                      <div className="mt-4 mb-2">Are you sure?</div>
+                {confirmDelete.open && (
+                  <div className="fixed min-h-screen inset-0 z-50 bg-black/20 flex justify-center items-center">
+                    <div className="flex flex-col bg-white rounded-lg p-4 shadow-lg h-40 w-80 text-center justify-around">
+                      Are you sure you want to delete this note?
                       <div className="flex items-center justify-center">
                         <button
                           className="bg-[#FAECE7] border-[#F5C4B3] text-[#D85A30] w-20 ml-4 p-2 rounded-[8px] cursor-pointer hover:bg-[#F1EFE8] transition-all active:scale-95"
-                          onClick={() => handleConfirm("no", appStatus)}
+                          onClick={() =>
+                            setConfirmDelete({ open: false, id: "" })
+                          }
                         >
                           Cancel
                         </button>
                         <button
                           className="bg-[#62bfa852] border border-[#62bfa8b1] text-[#0F6E56] w-20 ml-4 p-2 rounded-[8px] cursor-pointer hover:bg-[#F1EFE8] transition-all active:scale-95"
-                          onClick={() => handleConfirm("yes", appStatus)}
+                          onClick={() => {
+                            setConfirmDelete((prev) => ({
+                              ...prev,
+                              open: false,
+                            }));
+                            handleDelete();
+                          }}
                         >
-                          Save
+                          Delete
                         </button>
                       </div>
                     </div>
                   </div>
-                ) : null}
-                </>
-                }
+                )}
+                {appStatus && (
+                  <>
+                    {confirmStatus && appStatus !== data?.status ? (
+                      <div className="fixed inset-0 z-50 bg-black/20 flex justify-center items-center">
+                        <div className="flex flex-col bg-white rounded-lg p-4 shadow-lg h-40 w-80 text-center justify-around">
+                          You are about to change the status from "
+                          {data?.status}" to "{appStatus}".
+                          <div className="mt-4 mb-2">Are you sure?</div>
+                          <div className="flex items-center justify-center">
+                            <button
+                              className="bg-[#FAECE7] border-[#F5C4B3] text-[#D85A30] w-20 ml-4 p-2 rounded-[8px] cursor-pointer hover:bg-[#F1EFE8] transition-all active:scale-95"
+                              onClick={() => handleConfirm("no", appStatus)}
+                            >
+                              Cancel
+                            </button>
+                            <button
+                              className="bg-[#62bfa852] border border-[#62bfa8b1] text-[#0F6E56] w-20 ml-4 p-2 rounded-[8px] cursor-pointer hover:bg-[#F1EFE8] transition-all active:scale-95"
+                              onClick={() => handleConfirm("yes", appStatus)}
+                            >
+                              Save
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ) : null}
+                  </>
+                )}
                 <div className="border-b flex flex-col pt-4 pb-4 pl-5 pr-5 ">
                   <div className="text-[#5F5E5A] font-medium uppercase mb-2">
                     Application status
@@ -383,14 +446,27 @@ export default function AppCard({
                     onChange={(e) => setMessage(e.target.value)}
                   ></textarea>
                   <div className="flex justify-end pb-4">
-                    <button className="border max-w-30 p-2 rounded-[8px] cursor-pointer hover:bg-[#F1EFE8] transition-all active:invert"
-                    disabled={notesMutation.isPending}
-                    onClick={() => {createNote(message)}}>
-                      <FontAwesomeIcon
-                        icon={faPaperPlane}
-                        className="mr-2 text-xs"
-                      />
-                       Add note
+                    <button
+                      className="border w-30 p-2 rounded-[8px] cursor-pointer hover:bg-[#F1EFE8] transition-all active:invert"
+                      disabled={updating}
+                      onClick={() => {
+                        createNote(message);
+                      }}
+                    >
+                      {updating ? (
+                        <FontAwesomeIcon
+                          icon={faCircleNotch}
+                          className="text-sm text-[#2C2C2A] animate-spin"
+                        />
+                      ) : (
+                        <>
+                          <FontAwesomeIcon
+                            icon={faPaperPlane}
+                            className="mr-2 text-xs"
+                          />
+                          <span>Add note</span>
+                        </>
+                      )}
                     </button>
                   </div>
                   <div className="flex items-center">
@@ -407,21 +483,33 @@ export default function AppCard({
                   {data &&
                     data.notes.length > 0 &&
                     data.notes.map((note) => (
-                      <div key={note.id} className="border-b pl-2 pr-2 mt-2.5">
-                        <div className="flex justify-between mb-2">
-                          <div>Author: {note.author}</div>
-                          <div className="text-[#5F5E5A]">
-                            {formatDate(note.createdAt)}
+                        <div
+                          key={note.id}
+                          className="border-b pl-2 pr-2 mt-2.5"
+                        >
+                          <div className="flex justify-between mb-2">
+                            <div>Author: {note.author}</div>
+                            <div className="text-[#5F5E5A]">
+                              {formatDate(note.createdAt)}
+                            </div>
+                          </div>
+                          <div className="flex justify-between">
+                            <div className="mb-4 text-[#5F5E5A] w-[80%] min-w-0 wrap-break-word">
+                              {note.text}
+                            </div>
+                            <button
+                              className="bg-[#FAECE7] text-[#D85A30] border rounded-[8px] p-1 h-full cursor-pointer hover:bg-[#F1EFE8] transition-all active:scale-95"
+                              onClick={() =>
+                                setConfirmDelete({ open: true, id: note.id })
+                              }
+                            >
+                              Delete
+                            </button>
                           </div>
                         </div>
-                        <div className="mb-2 text-[#5F5E5A]">{note.text}</div>
-                      </div>
                     ))}
                 </div>
               </div>
-              {/* <SheetFooter>
-                <SheetClose>Save changes</SheetClose>
-              </SheetFooter> */}
             </>
           )}
         </SheetContent>
@@ -429,4 +517,3 @@ export default function AppCard({
     </>
   );
 }
-
