@@ -1,11 +1,11 @@
-import { useQuery } from "@tanstack/react-query";
-import { fetchApp } from "../lib/api";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { addNote, fetchApp, updateStatus } from "../lib/api";
 import {
   Sheet,
-  SheetClose,
+  // SheetClose,
   SheetContent,
   SheetDescription,
-  SheetFooter,
+  // SheetFooter,
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
@@ -13,14 +13,17 @@ import { formatDate, pillColor } from "@/lib/utils";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFlag as faFlag } from "@fortawesome/free-regular-svg-icons";
 import { faCircleNotch, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
-import type { Status } from "@/types";
+import type { Application, Result, Status } from "@/types";
+import { useEffect, useState } from "react";
 
 export default function AppCard({
-  id,
-  sheetOpen,
   // flagLoad,
   // isFetching,
+  id,
+  sheetOpen,
   appStatus,
+  confirmStatus,
+  setConfirmStatus,
   setAppStatus,
   setSheetOpen,
   handleFlagLoad,
@@ -28,18 +31,113 @@ export default function AppCard({
 }: {
   // flagLoad: string;
   // isFetching: boolean;
-  appStatus: Status;
+  appStatus: Status | null;
   id: string;
+  confirmStatus: boolean;
+  setConfirmStatus: React.Dispatch<React.SetStateAction<boolean>>;
   sheetOpen: boolean;
   setSheetOpen: (sheetOpen: boolean) => void;
   setAppStatus: (appStatus: Status) => void;
   handleFlagLoad: (id: string) => void;
   handleToggleFlag: (id: string, flagged: boolean) => void;
 }) {
+  const [message, setMessage] = useState<string>("") 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["app", id],
     queryFn: () => fetchApp(id),
+    placeholderData: (previousData) => previousData,
   });
+
+  const queryClient = useQueryClient();
+
+  const notesMutation = useMutation({
+    mutationFn: ({id, message}: {id: string, message: string}) => 
+    addNote(id, message),  
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["app"]
+      })
+    },
+  })
+
+  const statusMutation = useMutation({
+    mutationFn: ({id, appStatus}: {id: string; appStatus: Status}) => 
+    updateStatus(id, appStatus),
+
+    onMutate: async ({id, appStatus}) => {
+      await queryClient.cancelQueries({
+      queryKey: ["app", id],
+      });
+
+      queryClient.setQueryData(
+        ["app", id], 
+        (oldApp: Application | undefined) => {
+          if(!oldApp) return oldApp;
+
+          return {
+            ...oldApp, 
+            status: appStatus
+          }
+        }
+      )
+
+      queryClient.setQueriesData(
+       {queryKey: ["applications"]}, 
+        (oldResult: Result | undefined) => {
+          if(!oldResult) return oldResult
+
+          return {
+            ...oldResult,
+            applications: oldResult.applications.map((app) => 
+              app.id === id ? {...app, status: appStatus} : app,
+            )
+          }
+        }
+      )
+    },
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["app"],
+      });
+      queryClient.invalidateQueries({
+      queryKey: ["applications"],
+      })
+    }
+  })
+
+
+  function handleStatusChange(id:string, appStatus: Status){
+    statusMutation.mutate({id, appStatus})
+  }
+
+  function handleSave(val: Status) {
+    if (appStatus === val) return;
+    setConfirmStatus(!confirmStatus);
+  }
+
+  function handleConfirm(answer: string, appStatus: Status) {
+    if (answer === "no") {
+      setAppStatus(data!.status);
+      setConfirmStatus(false);
+    } else {
+      setConfirmStatus(false);
+      handleStatusChange(id, appStatus)
+    }
+  }
+
+   function createNote(message: string){
+    if(message.trim().length === 0) return
+    notesMutation.mutate({id, message})
+    setMessage("")
+  }
+
+
+  useEffect(() => {
+    if (!data) return;
+    setAppStatus(data.status);
+  }, [data, setAppStatus]);
 
   return (
     <>
@@ -90,7 +188,7 @@ export default function AppCard({
               ) : null}
             </>
           </SheetHeader>
-          {isLoading ? (
+          {isLoading && !data ? (
             <div className="flex items-center justify-center bg-gray-300 animate-pulse h-full">
               <FontAwesomeIcon
                 icon={faCircleNotch}
@@ -99,25 +197,60 @@ export default function AppCard({
             </div>
           ) : (
             <>
-              <div className="h-full overflow-auto no-scrollbar">
+              <div className="relative h-full overflow-auto no-scrollbar">
+                {appStatus && 
+                <>
+                {confirmStatus && appStatus !== data?.status ? (
+                  <div className="absolute inset-0 z-50 bg-black/20 flex justify-center p-10">
+                    <div className="bg-white rounded-lg p-4 shadow-lg h-40 w-80 text-center">
+                      You are about to change the status from "{data?.status}"
+                      to "{appStatus}".
+                      <div className="mt-4 mb-2">Are you sure?</div>
+                      <div className="flex items-center justify-center">
+                        <button
+                          className="bg-[#FAECE7] border-[#F5C4B3] text-[#D85A30] w-20 ml-4 p-2 rounded-[8px] cursor-pointer hover:bg-[#F1EFE8] transition-all active:scale-95"
+                          onClick={() => handleConfirm("no", appStatus)}
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          className="bg-[#62bfa852] border border-[#62bfa8b1] text-[#0F6E56] w-20 ml-4 p-2 rounded-[8px] cursor-pointer hover:bg-[#F1EFE8] transition-all active:scale-95"
+                          onClick={() => handleConfirm("yes", appStatus)}
+                        >
+                          Save
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ) : null}
+                </>
+                }
                 <div className="border-b flex flex-col pt-4 pb-4 pl-5 pr-5 ">
                   <div className="text-[#5F5E5A] font-medium uppercase mb-2">
                     Application status
                   </div>
                   <div>
-                    <select
-                      className="p-2 border w-1/2 rounded-[8px] outline-0 bg-[#F1EFE8] text-[16px] font-medium text-[#444441]"
-                      name="status"
-                      id="status"
-                      value={appStatus}
-                      onChange={(e) => setAppStatus(e.target.value as Status)}
+                    {appStatus && (
+                      <select
+                        className="p-2 border w-1/2 rounded-[8px] outline-0 bg-[#F1EFE8] text-[16px] font-medium text-[#444441] shadow-lg"
+                        name="status"
+                        id="status"
+                        value={appStatus}
+                        onChange={(e) => {
+                          setAppStatus(e.target.value as Status);
+                          setConfirmStatus(false);
+                        }}
+                      >
+                        <option value="Under Review">Under Review</option>
+                        <option value="Approved">Approved</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Declined">Declined</option>
+                      </select>
+                    )}
+                    <button
+                      className="border ml-4 p-2 rounded-[8px] cursor-pointer hover:bg-[#F1EFE8] transition-all active:scale-95"
+                      onClick={() => handleSave(data!.status)}
                     >
-                      <option value="Under-Review">Under Review</option>
-                      <option value="Approved">Approved</option>
-                      <option value="Pending">Pending</option>
-                      <option value="Declined">Declined</option>
-                    </select>
-                    <button className="border ml-4 p-2 rounded-[8px] cursor-pointer hover:bg-[#F1EFE8] transition-all active:scale-95">
                       Save Status
                     </button>
                   </div>
@@ -187,13 +320,13 @@ export default function AppCard({
                     IP summary
                   </div>
                   <div className="grid grid-cols-3 gap-4">
-                    <div className="border rounded-lg bg-[#F1EFE8] border-[#D3D1C7] p-4">
+                    <div className="border rounded-lg bg-[#F1EFE8] border-[#D3D1C7] p-4 shadow-lg">
                       <h2 className="text-[#5F5E5A] uppercase mb-2">Titles</h2>
                       <div className="font-medium text-[22px]">
                         {data?.ip.catalogueSize}
                       </div>
                     </div>
-                    <div className="border rounded-lg bg-[#F1EFE8] border-[#D3D1C7] p-4">
+                    <div className="border rounded-lg bg-[#F1EFE8] border-[#D3D1C7] p-4 shadow-lg">
                       <h2 className="text-[#5F5E5A] uppercase mb-2">
                         Est. Catalog Value
                       </h2>
@@ -201,7 +334,7 @@ export default function AppCard({
                         ${data?.ip.estimatedCatalogueValue.toLocaleString()}
                       </div>
                     </div>
-                    <div className="border rounded-lg bg-[#F1EFE8] border-[#D3D1C7] p-4">
+                    <div className="border rounded-lg bg-[#F1EFE8] border-[#D3D1C7] p-4 shadow-lg">
                       <h2 className="text-[#5F5E5A] uppercase mb-2">
                         Master Ownership
                       </h2>
@@ -210,7 +343,7 @@ export default function AppCard({
                         {data?.ip.masterOwnership.slice(1)}
                       </div>
                     </div>
-                    <div className="border rounded-lg bg-[#F1EFE8] border-[#D3D1C7] p-4">
+                    <div className="border rounded-lg bg-[#F1EFE8] border-[#D3D1C7] p-4 shadow-lg">
                       <h2 className="text-[#5F5E5A] uppercase mb-2">
                         Pub. Ownership
                       </h2>
@@ -218,7 +351,7 @@ export default function AppCard({
                         {data?.ip.publishingOwnership}
                       </div>
                     </div>
-                    <div className="border rounded-lg bg-[#F1EFE8] border-[#D3D1C7] p-4">
+                    <div className="border rounded-lg bg-[#F1EFE8] border-[#D3D1C7] p-4 shadow-lg">
                       <h2 className="text-[#5F5E5A] uppercase mb-2">
                         Active Sync Deals
                       </h2>
@@ -226,7 +359,7 @@ export default function AppCard({
                         {data?.ip.activeSyncDeals}
                       </div>
                     </div>
-                    <div className="border rounded-lg bg-[#F1EFE8] border-[#D3D1C7] p-4">
+                    <div className="border rounded-lg bg-[#F1EFE8] border-[#D3D1C7] p-4 shadow-lg">
                       <h2 className="text-[#5F5E5A] uppercase mb-2 text-[13px]">
                         Ann. Streaming Revenue
                       </h2>
@@ -242,18 +375,22 @@ export default function AppCard({
                     Internal notes
                   </div>
                   <textarea
-                    className="p-2 bg-[#F1EFE8] rounded-lg h-20 mb-2 outline-0"
-                    name=""
-                    id=""
+                    className="p-2 bg-[#F1EFE8] rounded-lg h-20 mb-2 outline-0 shadow-lg"
+                    name="note"
+                    id="note"
+                    value={message}
                     placeholder="Add a note..."
+                    onChange={(e) => setMessage(e.target.value)}
                   ></textarea>
                   <div className="flex justify-end pb-4">
-                    <button className="border max-w-30 p-2 rounded-[8px] cursor-pointer hover:bg-[#F1EFE8] transition-all active:invert">
+                    <button className="border max-w-30 p-2 rounded-[8px] cursor-pointer hover:bg-[#F1EFE8] transition-all active:invert"
+                    disabled={notesMutation.isPending}
+                    onClick={() => {createNote(message)}}>
                       <FontAwesomeIcon
                         icon={faPaperPlane}
                         className="mr-2 text-xs"
                       />
-                      Add note
+                       Add note
                     </button>
                   </div>
                   <div className="flex items-center">
@@ -267,19 +404,19 @@ export default function AppCard({
                     </span>
                     <div className="flex-1 border-t" />
                   </div>
-                  {data && data.notes.length > 0 && 
-                   data.notes.map((note) => (
-                     <div className="border-b pl-2 pr-2">
-                    <div className="flex justify-between mb-2">
-                        <div>Author: {note.author}</div>
-                        <div className="text-[#5F5E5A]">{formatDate(note.createdAt)}</div>
-                    </div>
-                    <div className="mb-2 text-[#5F5E5A]">
-                    {note.text}
-                    </div>
-                  </div>
-                  ))
-                    }
+                  {data &&
+                    data.notes.length > 0 &&
+                    data.notes.map((note) => (
+                      <div key={note.id} className="border-b pl-2 pr-2 mt-2.5">
+                        <div className="flex justify-between mb-2">
+                          <div>Author: {note.author}</div>
+                          <div className="text-[#5F5E5A]">
+                            {formatDate(note.createdAt)}
+                          </div>
+                        </div>
+                        <div className="mb-2 text-[#5F5E5A]">{note.text}</div>
+                      </div>
+                    ))}
                 </div>
               </div>
               {/* <SheetFooter>
@@ -293,19 +430,3 @@ export default function AppCard({
   );
 }
 
-// <>
-//   {isLoading ? (
-//     <div>Loading...</div>
-//   ) : (
-//     <div>
-//       <p>**********</p>
-//       {isError ? (
-//         <p>{error.message}</p>
-//       ) : (
-//         <p>
-//           {data?.id}: {data?.applicant.name}
-//         </p>
-//       )}
-//     </div>
-//   )}
-// </>

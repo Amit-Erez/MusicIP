@@ -21,7 +21,8 @@ function App() {
   const [sheetOpen, setSheetOpen] = useState<boolean>(false);
   const [id, setId] = useState<string>("");
   const [flagLoad, setFlagLoad] = useState<string>("");
-  const [appStatus, setAppStatus] = useState<Status | null>(null)
+  const [appStatus, setAppStatus] = useState<Status | null>(null);
+  const [confirmStatus, setConfirmStatus] = useState<boolean>(false);
 
   function handleFlagLoad(id: string) {
     setFlagLoad(id);
@@ -43,6 +44,7 @@ function App() {
   const flagMutation = useMutation({
     mutationFn: ({ id, flagged }: { id: string; flagged: boolean }) =>
     toggleFlag(id, flagged),
+
     onMutate: async ({ id, flagged }) => {
       await queryClient.cancelQueries({
         queryKey: ["app", id],
@@ -61,21 +63,20 @@ function App() {
       );
 
       queryClient.setQueriesData(
-  { queryKey: ["applications"] },
-  (oldResult: Result | undefined) => {
-    if (!oldResult) return oldResult;
+        { queryKey: ["applications"] },
+        (oldResult: Result | undefined) => {
+          if (!oldResult) return oldResult;
 
-    return {
-      ...oldResult,
-      applications: oldResult.applications.map((app) =>
-        app.id === id ? { ...app, flagged } : app
-      ),
-    };
-  }
-);
+          return {
+            ...oldResult,
+            applications: oldResult.applications.map((app) =>
+              app.id === id ? { ...app, flagged } : app,
+            ),
+          };
+        },
+      );
     },
 
-    
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["applications"],
@@ -119,6 +120,8 @@ function App() {
             handleFlagLoad={handleFlagLoad}
             appStatus={appStatus}
             setAppStatus={setAppStatus}
+            confirmStatus={confirmStatus}
+            setConfirmStatus={setConfirmStatus}
             // isFetching={isFetching}
             // flagLoad={flagLoad}
           />

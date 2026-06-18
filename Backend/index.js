@@ -2,6 +2,7 @@ import express from "express";
 import morgan from "morgan";
 import { readFile, writeFile } from "fs/promises";
 import cors from "cors";
+import { json } from "stream/consumers";
 
 const app = express();
 app.use(cors());
@@ -14,6 +15,7 @@ app.listen(PORT, () => {
   console.log(`server listening on http://localhost:${PORT}`);
 });
 
+// Main GET for list of applications
 app.get("/api/applications", async (req, res) => {
   const { filters, sort, dbQuery, page, limit } = req.query;
   const searchQuery = typeof dbQuery === "string" ? dbQuery : "";
@@ -53,6 +55,7 @@ app.get("/api/applications", async (req, res) => {
   }
 });
 
+// GET the chosen application data for the slide-in sheet component
 app.get("/api/applications/:id", async (req, res) => {
   const id = req.params.id;
   try {
@@ -81,6 +84,7 @@ app.get("/api/applications/:id", async (req, res) => {
   }
 });
 
+// Helper function filtering, sorting and paginating the application list 
 function organizeResult(
   applications,
   { searchQuery, selectedFilters, pageNum, limitPerPage, sort },
@@ -119,6 +123,7 @@ function organizeResult(
   };
 }
 
+// Patch function for updating 'Flagged' 
 app.patch("/api/applications/:id", async (req, res) => {
   const id = req.params.id;
   try {
@@ -156,3 +161,69 @@ app.patch("/api/applications/:id", async (req, res) => {
     }
   }
 });
+
+// Patch function for updating app status
+app.patch("/api/applications/:id/status", async (req, res) => {
+  const id = req.params.id
+  try {
+    const fileData = await readFile("./db.json", "utf-8")
+    const data = JSON.parse(fileData)
+    const searchedApp = data.applications.find((app) => app.id === id)
+    if (!searchedApp) {
+     return res.status(404).json({
+      message: "File not found"
+     })
+    } else {
+      searchedApp.status = req.body.newStatus
+      await writeFile("./db.json", JSON.stringify(data, null, 2))
+      return res.json(searchedApp)
+    }
+  } catch (error) {
+    if (error.code === "ENONET") {
+      res.status(404).json({
+        message: "404: File not found",
+      }) 
+    } else {
+      res.status(500).json({
+        message: "500: Server error"
+      })
+    }
+  }
+})
+
+app.post("/api/applications/:id/note", async (req, res) => {
+  const id = req.params.id
+  const message = req.body.message
+  const note = {
+      id: crypto.randomUUID(),
+      author: "Amit Erez",
+      text: message,
+      createdAt: new Date().toISOString()
+    }
+
+  try {
+    const fileData = await readFile("./db.json", "utf-8")
+    const data = JSON.parse(fileData)
+    const searchedApp = data.applications.find((app) => app.id === id)
+    if (!searchedApp) {
+     return res.status(404).json({
+      message: "File not found"
+     })
+    } else {
+      searchedApp.notes.unshift(note)
+      await writeFile("./db.json", JSON.stringify(data, null, 2))
+      return res.status(200).json(searchedApp)
+    }
+  } catch (error) {
+    if (error.code === "ENONET") {
+      res.status(404).json({
+        message: "404: File not found",
+      }) 
+    } else {
+      res.status(500).json({
+        message: "500: Server error"
+      })
+    }
+  }
+
+})

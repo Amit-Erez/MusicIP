@@ -1,4 +1,4 @@
-import type { Application, Filter, Result, Sort } from "../types";
+import type { Application, Filter, Result, Sort, Status } from "../types";
 
 export async function fetchApplications({
   filters,
@@ -55,4 +55,35 @@ if(!res.ok) {
 
 return res.json();
 
+}
+
+export async function updateStatus(id: string, newStatus: Status) {
+ const res = await fetch(`http://localhost:3000/api/applications/${id}/status`, {
+  method: "PATCH",
+  headers: {"Content-Type": "application/json"},
+  body: JSON.stringify({newStatus})
+ }) 
+
+ if(!res.ok) {
+  const error = await res.json()
+  throw new Error(error.message)
+ }
+
+ return res.json();
+
+}
+
+export async function addNote(id: string, message: string) {
+  const res = await fetch(`http://localhost:3000/api/applications/${id}/note`, {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({message})
+  })
+
+  if(!res.ok) {
+    const error = await res.json()
+    throw new Error(error.message)
+  }
+
+  return res.json()
 }

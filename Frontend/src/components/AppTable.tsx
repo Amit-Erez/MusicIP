@@ -58,7 +58,7 @@ export function AppTable({
   if (!result) return null;
 
   return (
-    <div className="flex border rounded-lg overflow-hidden">
+    <div className="flex border rounded-lg overflow-hidden shadow-lg">
       <Table className="text-[#2C2C2A]">
         <TableHeader>
           <TableRow>

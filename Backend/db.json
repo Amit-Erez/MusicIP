@@ -26,7 +26,7 @@
       },
       "notes": [
         {
-          "id": "n1",
+          "id": "a3c8f94e-0d73-4a8d-b0bb-6f9f1c8c7c31",
           "author": "Analyst",
           "text": "Streaming revenue trending up 18% YoY.",
           "createdAt": "2026-04-14T11:00:00Z"
@@ -85,7 +85,7 @@
       },
       "notes": [
         {
-          "id": "n2",
+          "id": "7e5a2d1f-3b44-4c9a-9a21-1d7c5e2f8b64",
           "author": "Credit Committee",
           "text": "Strong cash flow and diversified catalogue.",
           "createdAt": "2026-04-24T10:00:00Z"
@@ -144,7 +144,7 @@
       },
       "notes": [
         {
-          "id": "n3",
+          "id": "c9f2e731-8a5b-4d62-95c1-4e7b2f9a6d13",
           "author": "Analyst",
           "text": "Revenue profile insufficient for requested amount.",
           "createdAt": "2026-04-28T09:15:00Z"
@@ -177,7 +177,7 @@
       },
       "notes": [
         {
-          "id": "n4",
+          "id": "1b7d6c4e-9f23-4a71-a8d4-8c2e5f1b3a90",
           "author": "Analyst",
           "text": "Awaiting updated royalty statements.",
           "createdAt": "2026-05-01T12:20:00Z"
@@ -236,7 +236,7 @@
       },
       "notes": [
         {
-          "id": "n5",
+          "id": "f4a9d2b7-5c18-4e63-b7a1-2d9c6f3e8b52",
           "author": "Credit Committee",
           "text": "Excellent collateral coverage ratio.",
           "createdAt": "2026-05-08T13:30:00Z"
@@ -269,7 +269,7 @@
       },
       "notes": [
         {
-          "id": "n6",
+          "id": "2e8b5c71-1f94-4d3a-8c67-9f2e1b5d4a83",
           "author": "Analyst",
           "text": "Insufficient historical revenue data.",
           "createdAt": "2026-05-10T08:45:00Z"
@@ -302,7 +302,7 @@
       },
       "notes": [
         {
-          "id": "n7",
+          "id": "8d1c7f2a-4b56-4e91-9a32-5c7e2d8f1b64",
           "author": "Compliance",
           "text": "Ownership documentation requires verification.",
           "createdAt": "2026-05-11T16:00:00Z"
@@ -361,7 +361,7 @@
       },
       "notes": [
         {
-          "id": "n8",
+          "id": "5f3a9c1e-7d24-4b82-a6f1-3e8c5d2b7a90",
           "author": "Analyst",
           "text": "Financials reviewed, awaiting final committee decision.",
           "createdAt": "2026-05-18T09:30:00Z"
