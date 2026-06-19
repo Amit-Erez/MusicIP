@@ -1,14 +1,14 @@
+import type { Application, Filter, Result, Sort, Status } from "./types";
+import { useEffect, useState } from "react";
 import { cn } from "./lib/utils";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchApplications, toggleFlag } from "./lib/api";
-import Nav from "./components/Nav";
-import { AppTable } from "./components/AppTable";
-import TopSection from "./components/TopSection";
-import Filters from "./components/Filters";
-import { useEffect, useState } from "react";
-import type { Application, Filter, Result, Sort, Status } from "./types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
+import Nav from "./components/Nav";
+import TopSection from "./components/TopSection";
+import Filters from "./components/Filters";
+import AppTable from "./components/AppTable";
 import AppCard from "./components/AppCard";
 
 function App() {

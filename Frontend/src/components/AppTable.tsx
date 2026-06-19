@@ -18,7 +18,7 @@ import {
 
 library.add(faFlag, faFlagFull);
 
-export function AppTable({
+export default function AppTable({
   result,
   isLoading,
   // isFetching,

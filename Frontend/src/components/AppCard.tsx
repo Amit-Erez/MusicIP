@@ -9,16 +9,18 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { formatDate, pillColor } from "@/lib/utils";
+import { pillColor } from "@/lib/utils";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFlag as faFlag } from "@fortawesome/free-regular-svg-icons";
-import { faCircleNotch, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
+import { faCircleNotch } from "@fortawesome/free-solid-svg-icons";
 import type { Application, Result, Status } from "@/types";
 import { useEffect, useState } from "react";
+import SheetStatus from "./SheetStatus";
+import SheetLoan from "./SheetLoan";
+import SheetIP from "./SheetIP";
+import SheetNotes from "./SheetNotes";
 
 export default function AppCard({
-  // flagLoad,
-  // isFetching,
   id,
   sheetOpen,
   appStatus,
@@ -29,8 +31,6 @@ export default function AppCard({
   handleFlagLoad,
   handleToggleFlag,
 }: {
-  // flagLoad: string;
-  // isFetching: boolean;
   appStatus: Status | null;
   id: string;
   confirmStatus: boolean;
@@ -42,12 +42,11 @@ export default function AppCard({
   handleToggleFlag: (id: string, flagged: boolean) => void;
 }) {
   const [message, setMessage] = useState<string>("");
-  const [updating, setUpdating] = useState<boolean>(false)
+  const [updating, setUpdating] = useState<boolean>(false);
   const [confirmDelete, setConfirmDelete] = useState<{
     open: boolean;
     id: string;
   }>({ open: false, id: "" });
-
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["app", id],
@@ -66,8 +65,8 @@ export default function AppCard({
         queryKey: ["app"],
       });
       setTimeout(() => {
-        setUpdating(false)
-      },2200)
+        setUpdating(false);
+      }, 2200);
     },
   });
 
@@ -126,8 +125,8 @@ export default function AppCard({
         queryKey: ["app"],
       });
       setTimeout(() => {
-      setUpdating(false)
-      },2200)
+        setUpdating(false);
+      }, 2200);
     },
   });
 
@@ -152,14 +151,14 @@ export default function AppCard({
 
   function createNote(message: string) {
     if (message.trim().length === 0) return;
-    setUpdating(true)
+    setUpdating(true);
     notesMutation.mutate({ id, message });
     setMessage("");
   }
 
   function handleDelete() {
     if (!confirmDelete.id) return;
-    setUpdating(true)
+    setUpdating(true);
     const noteId = confirmDelete.id;
     deleteMutation.mutate({ id, noteId });
     setConfirmDelete((prev) => ({
@@ -176,7 +175,6 @@ export default function AppCard({
   return (
     <>
       <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-        {/* The sliding panel content */}
         <SheetContent className="border-l-4 border-[#E4E3DC]">
           <SheetHeader className="relative flex flex-col pt-4 pb-4 pl-5 pr-5 border-b">
             <>
@@ -230,287 +228,85 @@ export default function AppCard({
               />
             </div>
           ) : (
-            <>
-              <div className="relative h-full overflow-auto no-scrollbar">
-                {confirmDelete.open && (
-                  <div className="fixed min-h-screen inset-0 z-50 bg-black/20 flex justify-center items-center">
-                    <div className="flex flex-col bg-white rounded-lg p-4 shadow-lg h-40 w-80 text-center justify-around">
-                      Are you sure you want to delete this note?
-                      <div className="flex items-center justify-center">
-                        <button
-                          className="bg-[#FAECE7] border-[#F5C4B3] text-[#D85A30] w-20 ml-4 p-2 rounded-[8px] cursor-pointer hover:bg-[#F1EFE8] transition-all active:scale-95"
-                          onClick={() =>
-                            setConfirmDelete({ open: false, id: "" })
-                          }
-                        >
-                          Cancel
-                        </button>
-                        <button
-                          className="bg-[#62bfa852] border border-[#62bfa8b1] text-[#0F6E56] w-20 ml-4 p-2 rounded-[8px] cursor-pointer hover:bg-[#F1EFE8] transition-all active:scale-95"
-                          onClick={() => {
-                            setConfirmDelete((prev) => ({
-                              ...prev,
-                              open: false,
-                            }));
-                            handleDelete();
-                          }}
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                )}
-                {appStatus && (
-                  <>
-                    {confirmStatus && appStatus !== data?.status ? (
-                      <div className="fixed inset-0 z-50 bg-black/20 flex justify-center items-center">
-                        <div className="flex flex-col bg-white rounded-lg p-4 shadow-lg h-40 w-80 text-center justify-around">
-                          You are about to change the status from "
-                          {data?.status}" to "{appStatus}".
-                          <div className="mt-4 mb-2">Are you sure?</div>
-                          <div className="flex items-center justify-center">
-                            <button
-                              className="bg-[#FAECE7] border-[#F5C4B3] text-[#D85A30] w-20 ml-4 p-2 rounded-[8px] cursor-pointer hover:bg-[#F1EFE8] transition-all active:scale-95"
-                              onClick={() => handleConfirm("no", appStatus)}
-                            >
-                              Cancel
-                            </button>
-                            <button
-                              className="bg-[#62bfa852] border border-[#62bfa8b1] text-[#0F6E56] w-20 ml-4 p-2 rounded-[8px] cursor-pointer hover:bg-[#F1EFE8] transition-all active:scale-95"
-                              onClick={() => handleConfirm("yes", appStatus)}
-                            >
-                              Save
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    ) : null}
-                  </>
-                )}
-                <div className="border-b flex flex-col pt-4 pb-4 pl-5 pr-5 ">
-                  <div className="text-[#5F5E5A] font-medium uppercase mb-2">
-                    Application status
-                  </div>
-                  <div>
-                    {appStatus && (
-                      <select
-                        className="p-2 border w-1/2 rounded-[8px] outline-0 bg-[#F1EFE8] text-[16px] font-medium text-[#444441] shadow-lg"
-                        name="status"
-                        id="status"
-                        value={appStatus}
-                        onChange={(e) => {
-                          setAppStatus(e.target.value as Status);
-                          setConfirmStatus(false);
+            <div className="relative h-full overflow-auto no-scrollbar">
+              {confirmDelete.open && (
+                <div className="fixed min-h-screen inset-0 z-50 bg-black/20 flex justify-center items-center">
+                  <div className="flex flex-col bg-white rounded-lg p-4 shadow-lg h-40 w-80 text-center justify-around">
+                    Are you sure you want to delete this note?
+                    <div className="flex items-center justify-center">
+                      <button
+                        className="bg-[#FAECE7] border-[#F5C4B3] text-[#D85A30] w-20 ml-4 p-2 rounded-[8px] cursor-pointer hover:bg-[#F1EFE8] transition-all active:scale-95"
+                        onClick={() =>
+                          setConfirmDelete({ open: false, id: "" })
+                        }
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        className="bg-[#62bfa852] border border-[#62bfa8b1] text-[#0F6E56] w-20 ml-4 p-2 rounded-[8px] cursor-pointer hover:bg-[#F1EFE8] transition-all active:scale-95"
+                        onClick={() => {
+                          setConfirmDelete((prev) => ({
+                            ...prev,
+                            open: false,
+                          }));
+                          handleDelete();
                         }}
                       >
-                        <option value="Under Review">Under Review</option>
-                        <option value="Approved">Approved</option>
-                        <option value="Pending">Pending</option>
-                        <option value="Declined">Declined</option>
-                      </select>
-                    )}
-                    <button
-                      className="border ml-4 p-2 rounded-[8px] cursor-pointer hover:bg-[#F1EFE8] transition-all active:scale-95"
-                      onClick={() => handleSave(data!.status)}
-                    >
-                      Save Status
-                    </button>
-                  </div>
-                </div>
-                <div className="border-b flex flex-col pt-4 pb-4 pl-5 pr-5 ">
-                  <div className="text-[#5F5E5A] font-medium uppercase mb-4">
-                    Loan request
-                  </div>
-                  <div
-                    className="grid gap-4"
-                    style={{ gridTemplateColumns: "1fr 1fr" }}
-                  >
-                    <div>
-                      <div className="text-[#5F5E5A] text-[13px]">
-                        Amount requested
-                      </div>
-                      <div className="text-black text-[20px]">
-                        $
-                        {data?.loanRequest.amountRequested.toLocaleString(
-                          "en-US",
-                        )}
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-[#5F5E5A] text-[13px]">
-                        Term requested
-                      </div>
-                      <div className="text-black text-[18px]">
-                        {data?.loanRequest.term} Months
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-[#5F5E5A] text-[13px]">
-                        Date submitted
-                      </div>
-                      <div className="text-black text-[18px]">
-                        {formatDate(data!.submittedAt)}
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-[#5F5E5A] text-[13px]">Purpose</div>
-                      <div className="text-black text-[18px]">
-                        {data?.loanRequest.purpose[0].toUpperCase()}
-                        {data?.loanRequest.purpose.slice(1)}
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-[#5F5E5A] text-[13px]">
-                        Jurisdiction
-                      </div>
-                      <div className="text-black text-[18px]">
-                        {data?.applicant.country}
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-[#5F5E5A] text-[13px]">
-                        Contact email
-                      </div>
-                      <div className="text-black text-[16px]">
-                        {data?.applicant.contactEmail}
-                      </div>
+                        Delete
+                      </button>
                     </div>
                   </div>
                 </div>
-                <div className="border-b flex flex-col pt-4 pb-4 pl-5 pr-5 ">
-                  <div className="text-[#5F5E5A] font-medium uppercase mb-4">
-                    IP summary
-                  </div>
-                  <div className="grid grid-cols-3 gap-4">
-                    <div className="border rounded-lg bg-[#F1EFE8] border-[#D3D1C7] p-4 shadow-lg">
-                      <h2 className="text-[#5F5E5A] uppercase mb-2">Titles</h2>
-                      <div className="font-medium text-[22px]">
-                        {data?.ip.catalogueSize}
-                      </div>
-                    </div>
-                    <div className="border rounded-lg bg-[#F1EFE8] border-[#D3D1C7] p-4 shadow-lg">
-                      <h2 className="text-[#5F5E5A] uppercase mb-2">
-                        Est. Catalog Value
-                      </h2>
-                      <div className="font-medium text-[22px] text-[#534AB7]">
-                        ${data?.ip.estimatedCatalogueValue.toLocaleString()}
-                      </div>
-                    </div>
-                    <div className="border rounded-lg bg-[#F1EFE8] border-[#D3D1C7] p-4 shadow-lg">
-                      <h2 className="text-[#5F5E5A] uppercase mb-2">
-                        Master Ownership
-                      </h2>
-                      <div className="font-medium text-[22px]">
-                        {data?.ip.masterOwnership[0].toUpperCase()}
-                        {data?.ip.masterOwnership.slice(1)}
-                      </div>
-                    </div>
-                    <div className="border rounded-lg bg-[#F1EFE8] border-[#D3D1C7] p-4 shadow-lg">
-                      <h2 className="text-[#5F5E5A] uppercase mb-2">
-                        Pub. Ownership
-                      </h2>
-                      <div className="font-medium text-[22px]">
-                        {data?.ip.publishingOwnership}
-                      </div>
-                    </div>
-                    <div className="border rounded-lg bg-[#F1EFE8] border-[#D3D1C7] p-4 shadow-lg">
-                      <h2 className="text-[#5F5E5A] uppercase mb-2">
-                        Active Sync Deals
-                      </h2>
-                      <div className="font-medium text-[22px] text-[#0F6E56]">
-                        {data?.ip.activeSyncDeals}
-                      </div>
-                    </div>
-                    <div className="border rounded-lg bg-[#F1EFE8] border-[#D3D1C7] p-4 shadow-lg">
-                      <h2 className="text-[#5F5E5A] uppercase mb-2 text-[13px]">
-                        Ann. Streaming Revenue
-                      </h2>
-                      <div className="font-medium text-[22px] text-[#D85A30]">
-                        ${data?.ip.annualStreamingRevenue.toLocaleString()}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex flex-col pt-4 pb-4 pl-5 pr-5 ">
-                  <div className="text-[#5F5E5A] font-medium uppercase mb-2">
-                    Internal notes
-                  </div>
-                  <textarea
-                    className="p-2 bg-[#F1EFE8] rounded-lg h-20 mb-2 outline-0 shadow-lg"
-                    name="note"
-                    id="note"
-                    value={message}
-                    placeholder="Add a note..."
-                    onChange={(e) => setMessage(e.target.value)}
-                  ></textarea>
-                  <div className="flex justify-end pb-4">
-                    <button
-                      className="border w-30 p-2 rounded-[8px] cursor-pointer hover:bg-[#F1EFE8] transition-all active:invert"
-                      disabled={updating}
-                      onClick={() => {
-                        createNote(message);
-                      }}
-                    >
-                      {updating ? (
-                        <FontAwesomeIcon
-                          icon={faCircleNotch}
-                          className="text-sm text-[#2C2C2A] animate-spin"
-                        />
-                      ) : (
-                        <>
-                          <FontAwesomeIcon
-                            icon={faPaperPlane}
-                            className="mr-2 text-xs"
-                          />
-                          <span>Add note</span>
-                        </>
-                      )}
-                    </button>
-                  </div>
-                  <div className="flex items-center">
-                    <div className="flex-1 border-t" />
-                    <span className="px-3">
-                      {data?.notes.length === 0
-                        ? "No notes"
-                        : data?.notes.length === 1
-                          ? "1 note"
-                          : `${data?.notes.length} notes`}
-                    </span>
-                    <div className="flex-1 border-t" />
-                  </div>
-                  {data &&
-                    data.notes.length > 0 &&
-                    data.notes.map((note) => (
-                        <div
-                          key={note.id}
-                          className="border-b pl-2 pr-2 mt-2.5"
-                        >
-                          <div className="flex justify-between mb-2">
-                            <div>Author: {note.author}</div>
-                            <div className="text-[#5F5E5A]">
-                              {formatDate(note.createdAt)}
-                            </div>
-                          </div>
-                          <div className="flex justify-between">
-                            <div className="mb-4 text-[#5F5E5A] w-[80%] min-w-0 wrap-break-word">
-                              {note.text}
-                            </div>
-                            <button
-                              className="bg-[#FAECE7] text-[#D85A30] border rounded-[8px] p-1 h-full cursor-pointer hover:bg-[#F1EFE8] transition-all active:scale-95"
-                              onClick={() =>
-                                setConfirmDelete({ open: true, id: note.id })
-                              }
-                            >
-                              Delete
-                            </button>
-                          </div>
+              )}
+              {appStatus && (
+                <>
+                  {confirmStatus && appStatus !== data?.status ? (
+                    <div className="fixed inset-0 z-50 bg-black/20 flex justify-center items-center">
+                      <div className="flex flex-col bg-white rounded-lg p-4 shadow-lg h-40 w-80 text-center justify-around">
+                        You are about to change the status from "{data?.status}"
+                        to "{appStatus}".
+                        <div className="mt-4 mb-2">Are you sure?</div>
+                        <div className="flex items-center justify-center">
+                          <button
+                            className="bg-[#FAECE7] border-[#F5C4B3] text-[#D85A30] w-20 ml-4 p-2 rounded-[8px] cursor-pointer hover:bg-[#F1EFE8] transition-all active:scale-95"
+                            onClick={() => handleConfirm("no", appStatus)}
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            className="bg-[#62bfa852] border border-[#62bfa8b1] text-[#0F6E56] w-20 ml-4 p-2 rounded-[8px] cursor-pointer hover:bg-[#F1EFE8] transition-all active:scale-95"
+                            onClick={() => handleConfirm("yes", appStatus)}
+                          >
+                            Save
+                          </button>
                         </div>
-                    ))}
-                </div>
-              </div>
-            </>
+                      </div>
+                    </div>
+                  ) : null}
+                </>
+              )}
+              {appStatus && data && (
+                <>
+                  <SheetStatus
+                    data={data}
+                    handleSave={handleSave}
+                    appStatus={appStatus}
+                    setAppStatus={setAppStatus}
+                    setConfirmStatus={setConfirmStatus}
+                  />
+                  <SheetLoan data={data} />
+                  <SheetIP data={data} />
+                  <SheetNotes
+                    data={data}
+                    setMessage={setMessage}
+                    message={message}
+                    updating={updating}
+                    setConfirmDelete={setConfirmDelete}
+                    createNote={createNote}
+                  />
+                </>
+              )}
+            </div>
           )}
         </SheetContent>
       </Sheet>
