@@ -2,10 +2,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { addNote, deleteNote, fetchApp, updateStatus } from "../lib/api";
 import {
   Sheet,
-  // SheetClose,
   SheetContent,
   SheetDescription,
-  // SheetFooter,
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
@@ -28,7 +26,6 @@ export default function AppCard({
   setConfirmStatus,
   setAppStatus,
   setSheetOpen,
-  handleFlagLoad,
   handleToggleFlag,
 }: {
   appStatus: Status | null;
@@ -38,7 +35,6 @@ export default function AppCard({
   sheetOpen: boolean;
   setSheetOpen: (sheetOpen: boolean) => void;
   setAppStatus: (appStatus: Status) => void;
-  handleFlagLoad: (id: string) => void;
   handleToggleFlag: (id: string, flagged: boolean) => void;
 }) {
   const [message, setMessage] = useState<string>("");
@@ -210,7 +206,6 @@ export default function AppCard({
                   } 
                   rounded-[8px] w-8 h-8 p-2 right-16 cursor-pointer`}
                     onClick={() => {
-                      handleFlagLoad(data!.id);
                       handleToggleFlag(data!.id, !data?.flagged);
                     }}
                   >

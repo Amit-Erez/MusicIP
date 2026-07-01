@@ -21,18 +21,15 @@ library.add(faFlag, faFlagFull);
 export default function AppTable({
   result,
   isLoading,
-  // isFetching,
   setId,
   setSheetOpen,
   handleToggleFlag,
-  handleFlagLoad,
 }: {
   result: Result | undefined;
   isLoading: boolean;
   isFetching: boolean;
   setId: (id: string) => void;
   setSheetOpen: (sheetOpen: boolean) => void;
-  handleFlagLoad: (id: string) => void;
   handleToggleFlag: (id: string, flagged: boolean) => void;
 }) {
 
@@ -103,7 +100,6 @@ export default function AppTable({
                   className="relative"
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleFlagLoad(app.id);
                     handleToggleFlag(app.id, !app.flagged);
                   }}
                 >

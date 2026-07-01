@@ -20,13 +20,9 @@ function App() {
   const [query, setQuery] = useState<string>("");
   const [sheetOpen, setSheetOpen] = useState<boolean>(false);
   const [id, setId] = useState<string>("");
-  const [flagLoad, setFlagLoad] = useState<string>("");
   const [appStatus, setAppStatus] = useState<Status | null>(null);
   const [confirmStatus, setConfirmStatus] = useState<boolean>(false);
 
-  function handleFlagLoad(id: string) {
-    setFlagLoad(id);
-  }
 
   const {
     data: result,
@@ -117,13 +113,10 @@ function App() {
             sheetOpen={sheetOpen}
             setSheetOpen={setSheetOpen}
             handleToggleFlag={handleToggleFlag}
-            handleFlagLoad={handleFlagLoad}
             appStatus={appStatus}
             setAppStatus={setAppStatus}
             confirmStatus={confirmStatus}
             setConfirmStatus={setConfirmStatus}
-            // isFetching={isFetching}
-            // flagLoad={flagLoad}
           />
         )}
         <TopSection isLoading={isLoading} result={result} />
@@ -143,7 +136,6 @@ function App() {
           <AppTable
             result={result}
             isLoading={isLoading}
-            handleFlagLoad={handleFlagLoad}
             handleToggleFlag={handleToggleFlag}
             isFetching={isFetching}
             setSheetOpen={setSheetOpen}
