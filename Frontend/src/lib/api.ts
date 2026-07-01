@@ -1,5 +1,7 @@
 import type { Application, Filter, Result, Sort, Status } from "../types";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 export async function fetchApplications({
   filters,
   sort,
@@ -23,7 +25,7 @@ export async function fetchApplications({
     params.append("filters", filter);
   });
 
-  const res = await fetch(`http://localhost:3000/api/applications?${params}`);
+  const res = await fetch(`${API_URL}/api/applications?${params}`);
   const data = await res.json();
   if (!res.ok) {
     throw new Error(data.message);
@@ -32,7 +34,7 @@ export async function fetchApplications({
 }
 
 export async function fetchApp(id: string): Promise<Application> {
-  const res = await fetch(`http://localhost:3000/api/applications/${id}`);
+  const res = await fetch(`${API_URL}/api/applications/${id}`);
   const data = await res.json();
   if (!res.ok) {
     throw new Error(data.message);
@@ -42,7 +44,7 @@ export async function fetchApp(id: string): Promise<Application> {
 
 
 export async function toggleFlag(id: string, flagged: boolean) {
-const res = await fetch(`http://localhost:3000/api/applications/${id}`, {
+const res = await fetch(`${API_URL}/api/applications/${id}`, {
   method: "PATCH",
   headers: {"Content-Type": "application/json"},
   body: JSON.stringify({flagged})
@@ -58,7 +60,7 @@ return res.json();
 }
 
 export async function updateStatus(id: string, newStatus: Status) {
- const res = await fetch(`http://localhost:3000/api/applications/${id}/status`, {
+ const res = await fetch(`${API_URL}/api/applications/${id}/status`, {
   method: "PATCH",
   headers: {"Content-Type": "application/json"},
   body: JSON.stringify({newStatus})
@@ -74,7 +76,7 @@ export async function updateStatus(id: string, newStatus: Status) {
 }
 
 export async function addNote(id: string, message: string) {
-  const res = await fetch(`http://localhost:3000/api/applications/${id}/notes`, {
+  const res = await fetch(`${API_URL}/api/applications/${id}/notes`, {
     method: "POST",
     headers: {"Content-Type": "application/json"},
     body: JSON.stringify({message})
@@ -90,7 +92,7 @@ export async function addNote(id: string, message: string) {
 }
 
 export async function deleteNote(id: string, noteId: string) {
-  const res = await fetch(`http://localhost:3000/api/applications/${id}/notes/${noteId}`, {
+  const res = await fetch(`${API_URL}/api/applications/${id}/notes/${noteId}`, {
     method: "DELETE",
   })
 
