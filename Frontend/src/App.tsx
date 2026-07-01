@@ -23,7 +23,6 @@ function App() {
   const [appStatus, setAppStatus] = useState<Status | null>(null);
   const [confirmStatus, setConfirmStatus] = useState<boolean>(false);
 
-
   const {
     data: result,
     isLoading,
@@ -39,7 +38,7 @@ function App() {
   const queryClient = useQueryClient();
   const flagMutation = useMutation({
     mutationFn: ({ id, flagged }: { id: string; flagged: boolean }) =>
-    toggleFlag(id, flagged),
+      toggleFlag(id, flagged),
 
     onMutate: async ({ id, flagged }) => {
       await queryClient.cancelQueries({
@@ -148,21 +147,32 @@ function App() {
           )}
           {result && result.applications.length !== 0 ? (
             <>
-              <FontAwesomeIcon
-                icon={faAngleLeft}
-                className={`mr-2 text-[18px] transition-opacity ${page === 1 ? "opacity-60 cursor-auto" : "cursor-pointer hover:opacity-60"}`}
+              <button
+                type="button"
+                aria-label="Previous page"
+                disabled={page === 1}
+                className="mr-2 text-[18px]"
                 onClick={() => setPage((prev) => Math.max(1, prev - 1))}
-              />
-              <p className="text-[14px]">
+              >
+                <FontAwesomeIcon
+                  icon={faAngleLeft}
+                  className={`transition-opacity ${page === 1 ? "opacity-60 cursor-auto" : "cursor-pointer hover:opacity-60"}`}
+                />
+              </button>
+              <p className="text-[14px]" aria-live="polite">
                 Showing page {result.page} of {result.maxPages}
               </p>
-              <FontAwesomeIcon
-                icon={faAngleRight}
-                className={`ml-2 text-[18px] transition-opacity ${page === result.maxPages ? "opacity-60 cursor-auto" : "cursor-pointer hover:opacity-60"}`}
+              <button
+                type="button"
+                aria-label="Next page"
+                disabled={page === result.maxPages}
+                className="ml-2 text-[18px]"
                 onClick={() =>
                   setPage((prev) => Math.min(result.maxPages, prev + 1))
                 }
-              />
+              >
+                <FontAwesomeIcon icon={faAngleRight} className={`transition-opacity ${page === result.maxPages ? "opacity-60 cursor-auto" : "cursor-pointer hover:opacity-60"}`} />
+              </button>
             </>
           ) : null}
         </div>
