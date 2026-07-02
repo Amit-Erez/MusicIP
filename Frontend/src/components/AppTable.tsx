@@ -32,7 +32,6 @@ export default function AppTable({
   setSheetOpen: (sheetOpen: boolean) => void;
   handleToggleFlag: (id: string, flagged: boolean) => void;
 }) {
-
   if (isLoading && !result) {
     return (
       <div className="flex items-center justify-center border rounded-lg overflow-hidden h-[411.5px] bg-gray-300 animate-pulse">
@@ -57,6 +56,7 @@ export default function AppTable({
   return (
     <div className="flex border rounded-lg overflow-hidden shadow-lg">
       <Table className="text-[#2C2C2A]">
+        <caption className="sr-only">Loan applications table</caption>
         <TableHeader>
           <TableRow>
             <TableHead className="w-80 text-[#2C2C2A]">APPLICANT</TableHead>
@@ -73,16 +73,18 @@ export default function AppTable({
         </TableHeader>
         <TableBody>
           {result.applications.map((app: Application) => (
-            <TableRow
-              key={app.id}
-              className="cursor-pointer bg-[#FFFFFF] hover:bg-[#F1EFE8]"
-              onClick={() => {
-                setId(app.id);
-                setSheetOpen(true);
-              }}
-            >
+            <TableRow key={app.id} className="bg-[#FFFFFF] hover:bg-[#F1EFE8]">
               <TableCell className="font-medium">
-                {app.applicant.name}
+                <button
+                  type="button"
+                  className="font-medium cursor-pointer underline-offset-4 transition-all hover:underline outline-none focus-visible:ring-2 rounded focus-visible:ring-[#534AB7]"
+                  onClick={() => {
+                    setId(app.id);
+                    setSheetOpen(true);
+                  }}
+                >
+                  {app.applicant.name}
+                </button>
               </TableCell>
               <TableCell>
                 <span className="p-1">{app.applicant.type}</span>
@@ -96,19 +98,19 @@ export default function AppTable({
                 </span>
               </TableCell>
               <TableCell className="text-right">
-                <div
-                  className="relative"
+                <button
+                  type="button"
+                  aria-label={
+                    app.flagged ? "Unflag application" : "Flag application"
+                  }
+                  className="relative outline-none focus-visible:ring-2 rounded focus-visible:ring-[#534AB7]"
                   onClick={(e) => {
                     e.stopPropagation();
                     handleToggleFlag(app.id, !app.flagged);
                   }}
                 >
-                  {!app.flagged ? (
-                    <FontAwesomeIcon icon={faFlag} />
-                  ) : (
-                    <FontAwesomeIcon icon={faFlagFull} />
-                  )}
-                </div>
+                  <FontAwesomeIcon icon={!app.flagged ? faFlag : faFlagFull} />
+                </button>
               </TableCell>
               <TableCell className="text-right">
                 {formatDate(app.submittedAt)}

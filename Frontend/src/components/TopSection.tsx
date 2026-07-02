@@ -10,7 +10,7 @@ export default function TopSection({
 }) {
   if (isLoading) {
     return (
-      <div className="flex flex-col  min-h-0 h-1/4">
+      <section className="flex flex-col  min-h-0 h-1/4" aria-busy={isLoading}>
         <h1 className="text-[#2C2C2A] text-[18px] font-medium">
           Funding applications
         </h1>
@@ -23,12 +23,13 @@ export default function TopSection({
             {[1, 2, 3, 4].map((_, index) => (
               <div
                 key={index}
+                aria-hidden="true"
                 className="border rounded-lg bg-gray-300 border-[#D3D1C7] h-27.75 animate-pulse"
               ></div>
             ))}
           </div>
         </div>
-      </div>
+      </section>
     );
   }
 
@@ -37,7 +38,7 @@ export default function TopSection({
   }
 
   return (
-    <div className="flex flex-col  min-h-0 h-1/4">
+    <section className="flex flex-col  min-h-0 h-1/4">
       <h1 className="text-[#2C2C2A] text-[18px] font-medium">
         Funding applications
       </h1>
@@ -45,7 +46,7 @@ export default function TopSection({
         Review and manage submitted applications from labels, publishers, and
         music companies.
       </p>
-      <Kpi result={result}/>
-    </div>
+      <Kpi result={result} />
+    </section>
   );
 }

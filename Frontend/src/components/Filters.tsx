@@ -48,7 +48,7 @@ export default function Filters({
         name="limit"
         id="limit"
         value={limit}
-        className="h-8 outline-0 hidden sm:block"
+        className="h-8 outline-none focus-visible:ring-2 focus-visible:ring-[#534AB7] rounded  hidden sm:block"
         onChange={(e) => setLimit(Number(e.target.value))}
       >
         <option value="10">10 per page</option>
@@ -75,7 +75,7 @@ export default function Filters({
               type="button"
               aria-expanded={isOpen}
               aria-controls="status-filters"
-              className="relative h-10 border p-1.5 mr-2 rounded-[10px] cursor-pointer hover:bg-white transition-colors"
+              className="relative h-10 border p-1.5 mr-2 rounded-[10px] cursor-pointer hover:bg-white transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#534AB7]"
               onClick={() => setIsOpen((prev) => !prev)}
             >
               Open Filters
@@ -155,7 +155,7 @@ export default function Filters({
             id="sort"
             value={sort}
             onChange={(e) => setSort(e.target.value as Sort)}
-            className="h-8 outline-0"
+            className="h-8 outline-none focus-visible:ring-2 rounded focus-visible:ring-[#534AB7]"
           >
             <option value="dateAsc">By Date Asc</option>
             <option value="dateDesc">By Date Desc</option>

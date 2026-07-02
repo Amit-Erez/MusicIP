@@ -196,38 +196,56 @@ export default function AppCard({
                       <span className="text-[#2C2C2A]">{data?.status}</span>
                     </span>
                   </SheetDescription>
-                  <div
-                    className={`absolute flex items-center justify-center 
-                  border 
+                  <button
+                    type="button"
+                    aria-label={
+                      data?.flagged ? "Unflag application" : "Flag application"
+                    }
+                    className={`absolute flex items-center justify-center border 
                   ${
                     data?.flagged
                       ? "bg-[#FAECE7] border-[#F5C4B3] text-[#D85A30]"
                       : "bg-[#FFFFFF] border-[#D3D1C7] text-[#888780]"
                   } 
-                  rounded-[8px] w-8 h-8 p-2 right-16 cursor-pointer`}
+                  rounded-[8px] w-8 h-8 p-2 right-16 cursor-pointer
+                  outline-none focus-visible:ring-2 focus-visible:ring-[#534AB7]
+                  `}
                     onClick={() => {
                       handleToggleFlag(data!.id, !data?.flagged);
                     }}
                   >
                     <FontAwesomeIcon icon={faFlag} />
-                  </div>
+                  </button>
                 </>
               ) : null}
             </>
           </SheetHeader>
           {isLoading && !data ? (
-            <div className="flex items-center justify-center bg-gray-300 animate-pulse h-full">
+            <div
+              role="status"
+              aria-live="polite"
+              className="flex items-center justify-center bg-gray-300 animate-pulse h-full"
+            >
+              <span className="sr-only">Loading application details.</span>
               <FontAwesomeIcon
                 icon={faCircleNotch}
+                aria-hidden="true"
                 className="text-6xl text-[#2C2C2A] animate-spin"
               />
             </div>
           ) : (
             <div className="relative h-full overflow-auto no-scrollbar">
               {confirmDelete.open && (
-                <div className="fixed min-h-screen inset-0 z-50 bg-black/20 flex justify-center items-center">
+                <div
+                  role="dialog"
+                  aria-modal="true"
+                  aria-labelledby="delete-note-title"
+                  className="fixed min-h-screen inset-0 z-50 bg-black/20 flex justify-center items-center"
+                >
                   <div className="flex flex-col bg-white rounded-lg p-4 shadow-lg h-40 w-80 text-center justify-around">
-                    Are you sure you want to delete this note?
+                    <p id="delete-note-title">
+                      Are you sure you want to delete this note?
+                    </p>
                     <div className="flex items-center justify-center">
                       <button
                         className="bg-[#FAECE7] border-[#F5C4B3] text-[#D85A30] w-20 ml-4 p-2 rounded-[8px] cursor-pointer hover:bg-[#F1EFE8] transition-all active:scale-95"
@@ -256,11 +274,26 @@ export default function AppCard({
               {appStatus && (
                 <>
                   {confirmStatus && appStatus !== data?.status ? (
-                    <div className="fixed inset-0 z-50 bg-black/20 flex justify-center items-center">
+                    <div
+                      role="dialog"
+                      aria-modal="true"
+                      aria-labelledby="status-change-title"
+                      aria-describedby="status-change-description"
+                      className="fixed inset-0 z-50 bg-black/20 flex justify-center items-center"
+                    >
                       <div className="flex flex-col bg-white rounded-lg p-4 shadow-lg h-40 w-80 text-center justify-around">
-                        You are about to change the status from "{data?.status}"
-                        to "{appStatus}".
-                        <div className="mt-4 mb-2">Are you sure?</div>
+                        <p id="status-change-title">
+                          You are about to change the status from "
+                          {data?.status}" to "{appStatus}".
+                        </p>
+                        <div>
+                          <p
+                            id="status-change-description"
+                            className="mt-4 mb-2"
+                          >
+                            Are you sure?
+                          </p>
+                        </div>
                         <div className="flex items-center justify-center">
                           <button
                             className="bg-[#FAECE7] border-[#F5C4B3] text-[#D85A30] w-20 ml-4 p-2 rounded-[8px] cursor-pointer hover:bg-[#F1EFE8] transition-all active:scale-95"

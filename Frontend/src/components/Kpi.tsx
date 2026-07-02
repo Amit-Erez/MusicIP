@@ -3,7 +3,7 @@ import type { Result } from "@/types";
 
 export default function Kpi({ result }: { result: Result }) {
   return (
-    <div className="flex pt-4 pb-4 h-full">
+    <section className="flex pt-4 pb-4 h-full" aria-label="Applications summary">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-8 w-full" aria-live="polite" aria-atomic="true">
         <div className="flex flex-col border rounded-lg bg-[#FFFFFF] border-[#D3D1C7] p-4 shadow-lg">
           <div className="w-full">
@@ -28,13 +28,13 @@ export default function Kpi({ result }: { result: Result }) {
           <p className="text-sm text-[#5F5E5A]">In page</p>
         </div>
         <div className="border rounded-lg bg-[#FFFFFF] border-[#D3D1C7] p-4 shadow-lg">
-          <div className="text-[#5F5E5A] font text-[14px] md:text-[16px]">FLAGGED</div>
+          <div className="text-[#5F5E5A] text-[14px] md:text-[16px]">FLAGGED</div>
           <div className="font-medium text-[22px] text-[#D85A30]">
             {result?.totalFlagged}
           </div>
           <p className="text-sm text-[#5F5E5A]">For follow-up</p>
         </div>
       </div>
-    </div>
+    </section>
   );
 }
