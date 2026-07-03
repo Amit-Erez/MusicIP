@@ -44,7 +44,7 @@ export default function SheetStatus({
         <button
           type="button"
           className="border ml-4 p-2 rounded-[8px] cursor-pointer hover:bg-[#F1EFE8] transition-all active:scale-95 outline-none focus-visible:ring-2 focus-visible:ring-[#534AB7]"
-          onClick={() => handleSave(data!.status)}
+          onClick={() =>handleSave(data!.status)}
         >
           Save Status
         </button>
