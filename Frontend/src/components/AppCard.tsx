@@ -275,51 +275,13 @@ export default function AppCard({
               {appStatus && (
                 <>
                   {confirmStatus && appStatus !== data?.status ? (
-                    <>
-                   <Confirm
+                    <Confirm
                       handleConfirm={handleConfirm}
                       confirmStatus={confirmStatus}
                       setConfirmStatus={setConfirmStatus}
                       appStatus={appStatus}
                       data={data}
                     />
-                  {/* <div
-                    role="dialog"
-                    aria-modal="true"
-                    aria-labelledby="status-change-title"
-                    aria-describedby="status-change-description"
-                    className="fixed inset-0 z-50 bg-black/20 flex justify-center items-center"
-                  >
-                    <div className="flex flex-col bg-white rounded-lg p-4 shadow-lg h-40 w-80 text-center justify-around">
-                      <p id="status-change-title">
-                        You are about to change the status from "
-                        {data?.status}" to "{appStatus}".
-                      </p>
-                      <div>
-                        <p
-                          id="status-change-description"
-                          className="mt-4 mb-2"
-                        >
-                          Are you sure?
-                        </p>
-                      </div>
-                      <div className="flex items-center justify-center">
-                        <button
-                          className="bg-[#FAECE7] border-[#F5C4B3] text-[#D85A30] w-20 ml-4 p-2 rounded-[8px] cursor-pointer hover:bg-[#F1EFE8] transition-all active:scale-95"
-                          onClick={() => handleConfirm("no", appStatus)}
-                        >
-                          Cancel
-                        </button>
-                        <button
-                          className="bg-[#62bfa852] border border-[#62bfa8b1] text-[#0F6E56] w-20 ml-4 p-2 rounded-[8px] cursor-pointer hover:bg-[#F1EFE8] transition-all active:scale-95"
-                          onClick={() => handleConfirm("yes", appStatus)}
-                        >
-                          Save
-                        </button>
-                      </div>
-                    </div>
-                  </div> */}
-                  </>
                   ) : null}
                 </>
               )}
