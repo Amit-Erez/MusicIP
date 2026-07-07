@@ -18,6 +18,7 @@ import SheetLoan from "./SheetLoan";
 import SheetIP from "./SheetIP";
 import SheetNotes from "./SheetNotes";
 import Confirm from "./Confirm";
+import DeleteDialog from "./DeleteDialog";
 
 export default function AppCard({
   id,
@@ -123,7 +124,7 @@ export default function AppCard({
       });
       setTimeout(() => {
         setUpdating(false);
-      }, 2200);
+      }, 1000);
     },
   });
 
@@ -237,40 +238,11 @@ export default function AppCard({
           ) : (
             <div className="relative h-full overflow-auto no-scrollbar">
               {confirmDelete.open && (
-                <div
-                  role="dialog"
-                  aria-modal="true"
-                  aria-labelledby="delete-note-title"
-                  className="fixed min-h-screen inset-0 z-50 bg-black/20 flex justify-center items-center"
-                >
-                  <div className="flex flex-col bg-white rounded-lg p-4 shadow-lg h-40 w-80 text-center justify-around">
-                    <p id="delete-note-title">
-                      Are you sure you want to delete this note?
-                    </p>
-                    <div className="flex items-center justify-center">
-                      <button
-                        className="bg-[#FAECE7] border-[#F5C4B3] text-[#D85A30] w-20 ml-4 p-2 rounded-[8px] cursor-pointer hover:bg-[#F1EFE8] transition-all active:scale-95"
-                        onClick={() =>
-                          setConfirmDelete({ open: false, id: "" })
-                        }
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        className="bg-[#62bfa852] border border-[#62bfa8b1] text-[#0F6E56] w-20 ml-4 p-2 rounded-[8px] cursor-pointer hover:bg-[#F1EFE8] transition-all active:scale-95"
-                        onClick={() => {
-                          setConfirmDelete((prev) => ({
-                            ...prev,
-                            open: false,
-                          }));
-                          handleDelete();
-                        }}
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </div>
-                </div>
+                <DeleteDialog 
+                confirmDelete={confirmDelete}
+                setConfirmDelete={setConfirmDelete}
+                handleDelete={handleDelete}
+                />
               )}
               {appStatus && (
                 <>
