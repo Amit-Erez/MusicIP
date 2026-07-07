@@ -32,6 +32,7 @@ export default function DeleteDialog({
         <DialogHeader>
           <DialogTitle className="text-center leading-5">
             Are you sure you want to delete this note?
+            This cannot be undone...
           </DialogTitle>
         </DialogHeader>
         <div className="flex items-center justify-center ">

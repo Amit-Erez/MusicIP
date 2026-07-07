@@ -3,6 +3,15 @@ import morgan from "morgan";
 import { readFile, writeFile } from "fs/promises";
 import cors from "cors";
 import { json } from "stream/consumers";
+import { z } from "zod";
+
+const noteSchema = z.object({
+  message: z.string().trim().min(1, "Note cannot be empty").max(500),
+});
+
+const statusSchema = z.object({
+  newStatus: z.enum(["Pending", "Under Review", "Approved", "Declined"]),
+});
 
 const app = express();
 app.use(cors());
@@ -163,6 +172,17 @@ app.patch("/api/applications/:id", async (req, res) => {
 // Patch function for updating app status
 app.patch("/api/applications/:id/status", async (req, res) => {
   const id = req.params.id;
+
+  const result = statusSchema.safeParse(req.body);
+
+  if (!result.success) {
+    return res.status(400).json({
+      message: result.error.issues[0].message,
+    });
+  }
+
+  const newStatus = result.data.newStatus;
+
   try {
     const fileData = await readFile("./db.json", "utf-8");
     const data = JSON.parse(fileData);
@@ -172,12 +192,12 @@ app.patch("/api/applications/:id/status", async (req, res) => {
         message: "Application not found",
       });
     } else {
-      searchedApp.status = req.body.newStatus;
+      searchedApp.status = newStatus;
       await writeFile("./db.json", JSON.stringify(data, null, 2));
       return res.json(searchedApp);
     }
   } catch (error) {
-    if (error.code === "ENONET") {
+    if (error.code === "ENOENT") {
       res.status(404).json({
         message: "404: Database file not found",
       });
@@ -191,7 +211,16 @@ app.patch("/api/applications/:id/status", async (req, res) => {
 
 app.post("/api/applications/:id/notes", async (req, res) => {
   const id = req.params.id;
-  const message = req.body.message;
+
+  const result = noteSchema.safeParse(req.body);
+  if (!result.success) {
+    return res.status(400).json({
+      message: result.error.issues[0].message,
+    });
+  }
+
+  const message = result.data.message;
+
   const note = {
     id: crypto.randomUUID(),
     author: "Amit Erez",
@@ -213,7 +242,7 @@ app.post("/api/applications/:id/notes", async (req, res) => {
       return res.status(200).json(searchedApp);
     }
   } catch (error) {
-    if (error.code === "ENONET") {
+    if (error.code === "ENOENT") {
       res.status(404).json({
         message: "404: Database file not found",
       });

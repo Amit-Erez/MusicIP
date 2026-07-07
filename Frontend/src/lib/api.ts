@@ -42,7 +42,6 @@ export async function fetchApp(id: string): Promise<Application> {
   return data;
 }
 
-
 export async function toggleFlag(id: string, flagged: boolean) {
 const res = await fetch(`${API_URL}/api/applications/${id}`, {
   method: "PATCH",

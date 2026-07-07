@@ -24,7 +24,7 @@ export function cn(...inputs: ClassValue[]) {
     return `$${total.toLocaleString('en-US')}`
   }
 
-   export function amountPending(data: Application[]): string {
+  export function amountPending(data: Application[]): string {
     if(!data) return ""
     let total = 0 
     for (const app of data) {

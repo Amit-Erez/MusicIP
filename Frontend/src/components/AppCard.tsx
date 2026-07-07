@@ -148,7 +148,10 @@ export default function AppCard({
   }
 
   function createNote(message: string) {
-    if (message.trim().length === 0) return;
+    if (message.trim().length === 0) {
+    setMessage("")
+    return;
+    }
     setUpdating(true);
     notesMutation.mutate({ id, message });
     setMessage("");
