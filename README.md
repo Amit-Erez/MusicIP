@@ -201,6 +201,8 @@ npm test
 
 The MVP was audited using Google Lighthouse to validate performance, accessibility, SEO, and web best practices prior to deployment.
 
+### Desktop Audit
+
 | Category | Score |
 |----------|:-----:|
 | Performance | **100** |
@@ -208,6 +210,14 @@ The MVP was audited using Google Lighthouse to validate performance, accessibili
 | Best Practices | **100** |
 | SEO | **100** |
 
+### Mobile Audit
+
+| Category | Score |
+|----------|:-----:|
+| Performance | **98** |
+| Accessibility | **100** |
+| Best Practices | **100** |
+| SEO | **100** |
 Highlights include:
 
 - Semantic HTML with proper landmark elements (`<main>`, accessible labels, etc.)
