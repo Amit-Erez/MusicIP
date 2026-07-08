@@ -54,7 +54,7 @@ export default function DeleteDialog({
                 outline-none focus-visible:ring-2 focus-visible:ring-[#534AB7]      
                 hover:bg-[#F1EFE8] transition-all active:scale-95"
             onClick={() => {
-              setConfirmDelete((prev) => ({ ...prev, open: false }));
+              setConfirmDelete({ open: false, id: confirmDelete.id });
               handleDelete();
             }}
           >

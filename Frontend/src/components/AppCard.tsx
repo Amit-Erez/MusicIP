@@ -17,8 +17,8 @@ import SheetStatus from "./SheetStatus";
 import SheetLoan from "./SheetLoan";
 import SheetIP from "./SheetIP";
 import SheetNotes from "./SheetNotes";
-import Confirm from "./Confirm";
 import DeleteDialog from "./DeleteDialog";
+import ConfirmDialog from "./ConfirmDialog";
 
 export default function AppCard({
   id,
@@ -250,7 +250,7 @@ export default function AppCard({
               {appStatus && (
                 <>
                   {confirmStatus && appStatus !== data?.status ? (
-                    <Confirm
+                    <ConfirmDialog
                       handleConfirm={handleConfirm}
                       confirmStatus={confirmStatus}
                       setConfirmStatus={setConfirmStatus}
@@ -267,7 +267,7 @@ export default function AppCard({
                     handleSave={handleSave}
                     appStatus={appStatus}
                     setAppStatus={setAppStatus}
-                    setConfirmStatus={setConfirmStatus}
+                    // setConfirmStatus={setConfirmStatus}
                   />
                   <SheetLoan data={data} />
                   <SheetIP data={data} />

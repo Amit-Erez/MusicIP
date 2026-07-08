@@ -4,14 +4,12 @@ export default function SheetStatus({
   data,
   appStatus,
   setAppStatus,
-  setConfirmStatus,
   handleSave,
 }: {
   data: Application;
   appStatus: Status;
   handleSave: (status: Status) => void;
   setAppStatus: (appStatus: Status) => void;
-  setConfirmStatus: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   return (
     <div className="border-b flex flex-col pt-4 pb-4 pl-5 pr-5 ">
@@ -31,7 +29,6 @@ export default function SheetStatus({
               value={appStatus}
               onChange={(e) => {
                 setAppStatus(e.target.value as Status);
-                setConfirmStatus(false);
               }}
             >
               <option value="Under Review">Under Review</option>
@@ -44,7 +41,7 @@ export default function SheetStatus({
         <button
           type="button"
           className="border ml-4 p-2 rounded-[8px] cursor-pointer hover:bg-[#F1EFE8] transition-all active:scale-95 outline-none focus-visible:ring-2 focus-visible:ring-[#534AB7]"
-          onClick={() =>handleSave(data!.status)}
+          onClick={() => handleSave(data!.status)}
         >
           Save Status
         </button>

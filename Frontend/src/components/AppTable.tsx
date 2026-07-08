@@ -103,7 +103,7 @@ export default function AppTable({
                   aria-label={
                     app.flagged ? "Unflag application" : "Flag application"
                   }
-                  className="relative outline-none focus-visible:ring-2 rounded focus-visible:ring-[#534AB7]"
+                  className="relative outline-none focus-visible:ring-2 rounded focus-visible:ring-[#534AB7] cursor-pointer"
                   onClick={(e) => {
                     e.stopPropagation();
                     handleToggleFlag(app.id, !app.flagged);

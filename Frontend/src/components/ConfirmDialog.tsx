@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/dialog";
 import type { Application, Status } from "@/types";
 
-export default function Confirm({
+export default function ConfirmDialog({
   data,
   handleConfirm,
   confirmStatus,
