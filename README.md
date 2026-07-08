@@ -217,7 +217,7 @@ Highlights include:
 - Keyboard-accessible dialogs and interactive controls
 - Accessible form labels and semantic table structure
 
-![Google Lighthouse Report](./screenshots/lighthouse.png)
+![Google Lighthouse Report](./screenshots/Lighthouse.png)
 
 ---
 
