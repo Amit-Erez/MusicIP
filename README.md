@@ -220,7 +220,7 @@ The MVP was audited using Google Lighthouse to validate performance, accessibili
 | SEO | **100** |
 
 
-Highlights include:
+**Highlights include:**
 
 - Semantic HTML with proper landmark elements (`<main>`, accessible labels, etc.)
 - Fully responsive layout with zero cumulative layout shift (CLS)
