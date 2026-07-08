@@ -21,7 +21,7 @@ An internal tool for reviewing catalogue-backed funding applications submitted b
 
 **Frontend:** https://music-ip-ae.vercel.app/
 
-**Backend API:** https://musicip.onrender.com
+**Backend API:** https://musicip.onrender.com/api/applications/
 
 **GitHub Repository:** https://github.com/Amit-Erez/MusicIP
 
@@ -193,6 +193,31 @@ Run tests with:
 cd Frontend
 npm test
 ```
+
+---
+
+# Quality & Performance
+
+The MVP was audited using Google Lighthouse to validate performance, accessibility, SEO, and web best practices prior to deployment.
+
+| Category | Score |
+|----------|:-----:|
+| Performance | **100** |
+| Accessibility | **100** |
+| Best Practices | **100** |
+| SEO | **100** |
+
+Highlights include:
+
+- Semantic HTML with proper landmark elements (`<main>`, accessible labels, etc.)
+- Fully responsive layout with zero cumulative layout shift (CLS)
+- Optimized rendering with a **0 ms Total Blocking Time**
+- Fast initial page load with a **0.4 s Largest Contentful Paint (LCP)**
+- Meaningful metadata for improved search engine visibility
+- Keyboard-accessible dialogs and interactive controls
+- Accessible form labels and semantic table structure
+
+![Google Lighthouse Report](./screenshots/lighthouse.png)
 
 ---
 
