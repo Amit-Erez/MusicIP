@@ -63,7 +63,7 @@
       "id": "app_003",
       "submittedAt": "2026-04-21T08:45:00Z",
       "status": "Approved",
-      "flagged": false,
+      "flagged": true,
       "applicant": {
         "name": "Golden Mile Audio",
         "type": "Independent Label",
@@ -188,7 +188,7 @@
       "id": "app_007",
       "submittedAt": "2026-05-02T10:10:00Z",
       "status": "Pending",
-      "flagged": false,
+      "flagged": true,
       "applicant": {
         "name": "Moonline Records",
         "type": "Independent Label",

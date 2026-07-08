@@ -105,7 +105,7 @@ function App() {
   return (
     <div className={cn("min-h-screen  bg-[#F1EFE8] pt-12 pb-12 flex relative")}>
       <Nav />
-      <div className="w-[90%] max-w-325 h-full mx-auto pt-6 pb-4 flex flex-col fadeIn">
+      <main className="w-[90%] max-w-325 h-full mx-auto pt-6 pb-4 flex flex-col fadeIn">
         {sheetOpen && (
           <AppCard
             id={id}
@@ -176,7 +176,7 @@ function App() {
             </>
           ) : null}
         </div>
-      </div>
+      </main>
     </div>
   );
 }

@@ -53,7 +53,7 @@ describe("SheetStatus", () => {
   });
 
   // *******************************************************
-  // TEST 23: clicking Save Status should call handleSave //
+  // TEST 3: clicking Save Status should call handleSave //
   // *******************************************************
 
   test("clicking Save Status should call handleSave", async () => {
