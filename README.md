@@ -218,6 +218,8 @@ The MVP was audited using Google Lighthouse to validate performance, accessibili
 | Accessibility | **100** |
 | Best Practices | **100** |
 | SEO | **100** |
+
+
 Highlights include:
 
 - Semantic HTML with proper landmark elements (`<main>`, accessible labels, etc.)
