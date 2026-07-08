@@ -52,14 +52,14 @@ Unlike many portfolio dashboards that only display data, this project includes a
 
 > Main applications dashboard
 
-![Dashboard](assets/Main-Dash.png)
+![Dashboard](./Screenshots/Main-Dash.png)
 ---
 
 # Application Review
 
 > Slide-in review panel with status management, IP summary and internal notes
 
-![Application Review](assets/Slide-In.png)
+![Application Review](./Screenshots/Slide-In.png)
 
 ---
 
@@ -67,7 +67,7 @@ Unlike many portfolio dashboards that only display data, this project includes a
 
 > Confirmation dialog before persisting status changes
 
-![Confirm Dialog](assets/ConfirmDialog.png)
+![Confirm Dialog](./Screenshots/ConfirmDialog.png)
 
 ---
 
@@ -89,7 +89,7 @@ Unlike many portfolio dashboards that only display data, this project includes a
 ---
 
 # Architecture
-![alt text](assets/App-Architecture.png)
+![alt text](./Screenshots/App-Architecture.png)
 
 The project is structured as a lightweight monorepo containing separate frontend and backend applications.
 
