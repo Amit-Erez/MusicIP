@@ -34,6 +34,7 @@ An internal tool for reviewing catalogue-backed funding applications submitted b
 - [Architecture](#architecture)
 - [Tech Stack](#tech-stack)
 - [Testing](#testing)
+- [Quality & Performance](#quality--performance)
 - [Project Structure](#project-structure)
 - [Why This Project](#why-this-project)
 - [Future Improvements](#future-improvements)
@@ -217,7 +218,7 @@ Highlights include:
 - Keyboard-accessible dialogs and interactive controls
 - Accessible form labels and semantic table structure
 
-![Google Lighthouse Report](./screenshots/Lighthouse.png)
+![Google Lighthouse Report](./Screenshots/Lighthouse.png)
 
 ---
 
