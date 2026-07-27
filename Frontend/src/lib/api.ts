@@ -1,4 +1,4 @@
-import type { Application, Filter, Result, Sort, Status } from "../types";
+import type { Application, Filter, Result, Sort, Status, Tag } from "../types";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -74,11 +74,11 @@ export async function updateStatus(id: string, newStatus: Status) {
 
 }
 
-export async function addNote(id: string, message: string) {
+export async function addNote(id: string, message: string, tags: Tag[]) {
   const res = await fetch(`${API_URL}/api/applications/${id}/notes`, {
     method: "POST",
     headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({message})
+    body: JSON.stringify({message, tags})
   })
 
   if(!res.ok) {

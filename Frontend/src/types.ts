@@ -26,11 +26,14 @@ export type LoanRequest = {
   purpose: string
 }
 
+export type Tag = "Follow-up" | "Risk" | "Financial" | "Legal" | "General"
+
 export type Note = {
   id: string
   author: string
   text: string
   createdAt: string
+  tags: Tag[]
 }
 
 export type Application = {

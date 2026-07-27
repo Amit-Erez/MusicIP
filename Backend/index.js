@@ -7,6 +7,9 @@ import { z } from "zod";
 
 const noteSchema = z.object({
   message: z.string().trim().min(1, "Note cannot be empty").max(500),
+  tags: z
+    .array(z.enum(["Follow-up", "Risk", "Financial", "Legal", "General"]))
+    .default([]),
 });
 
 const statusSchema = z.object({
@@ -220,12 +223,14 @@ app.post("/api/applications/:id/notes", async (req, res) => {
   }
 
   const message = result.data.message;
+  const tags = result.data.tags;
 
   const note = {
     id: crypto.randomUUID(),
     author: "Amit Erez",
     text: message,
     createdAt: new Date().toISOString(),
+    tags,
   };
 
   try {

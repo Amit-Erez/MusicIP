@@ -11,7 +11,7 @@ import { pillColor } from "@/lib/utils";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFlag as faFlag } from "@fortawesome/free-regular-svg-icons";
 import { faCircleNotch } from "@fortawesome/free-solid-svg-icons";
-import type { Application, Result, Status } from "@/types";
+import type { Application, Result, Status, Tag } from "@/types";
 import { useEffect, useState } from "react";
 import SheetStatus from "./SheetStatus";
 import SheetLoan from "./SheetLoan";
@@ -40,6 +40,7 @@ export default function AppCard({
   handleToggleFlag: (id: string, flagged: boolean) => void;
 }) {
   const [message, setMessage] = useState<string>("");
+  const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
   const [updating, setUpdating] = useState<boolean>(false);
   const [confirmDelete, setConfirmDelete] = useState<{
     open: boolean;
@@ -55,8 +56,8 @@ export default function AppCard({
   const queryClient = useQueryClient();
 
   const notesMutation = useMutation({
-    mutationFn: ({ id, message }: { id: string; message: string }) =>
-      addNote(id, message),
+    mutationFn: ({ id, message, tags }: { id: string; message: string; tags: Tag[] }) =>
+      addNote(id, message, tags),
 
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -147,14 +148,15 @@ export default function AppCard({
     }
   }
 
-  function createNote(message: string) {
+  function createNote(message: string, tags: Tag[]) {
     if (message.trim().length === 0) {
     setMessage("")
     return;
     }
     setUpdating(true);
-    notesMutation.mutate({ id, message });
+    notesMutation.mutate({ id, message, tags });
     setMessage("");
+    setSelectedTags([]);
   }
 
   function handleDelete() {
@@ -275,6 +277,8 @@ export default function AppCard({
                     data={data}
                     setMessage={setMessage}
                     message={message}
+                    selectedTags={selectedTags}
+                    setSelectedTags={setSelectedTags}
                     updating={updating}
                     setConfirmDelete={setConfirmDelete}
                     createNote={createNote}
