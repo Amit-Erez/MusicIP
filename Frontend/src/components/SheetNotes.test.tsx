@@ -1,8 +1,8 @@
 import { test, describe, expect, beforeEach, vi, type Mock } from "vitest";
 import userEvent from "@testing-library/user-event";
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import SheetNotes from "./SheetNotes";
-import type { Application } from "@/types";
+import type { Application, Tag } from "@/types";
 
 const mockData = {
   notes: [
@@ -11,6 +11,7 @@ const mockData = {
       author: "Amit Erez",
       text: "Note 1",
       createdAt: "2026-04-14T11:00:00Z",
+      tags: ["Financial"],
     },
   ],
 } as Application;
@@ -19,16 +20,20 @@ describe("SheetNotes", () => {
   let setMessage: Mock;
   let createNote: Mock;
   let setConfirmDelete: Mock;
+  let setSelectedTags: Mock;
 
   beforeEach(() => {
     setMessage = vi.fn();
     createNote = vi.fn();
     setConfirmDelete = vi.fn();
+    setSelectedTags = vi.fn();
 
     render(
       <SheetNotes
         data={mockData}
         message={""}
+        selectedTags={[]}
+        setSelectedTags={setSelectedTags}
         updating={false}
         setMessage={setMessage}
         createNote={createNote}
@@ -86,7 +91,7 @@ describe("SheetNotes", () => {
   //TEST 5: Clicking 'Add Note' calls createNote
   //*********************************************
 
-  test("clicking 'Add Note' calls createNote", async () => {
+  test("clicking 'Add Note' calls createNote with the message and selected tags", async () => {
     const user = userEvent.setup();
     const button = screen.getByRole("button", {
       name: /add note/i,
@@ -94,6 +99,30 @@ describe("SheetNotes", () => {
 
     await user.click(button);
     expect(createNote).toHaveBeenCalledTimes(1);
+    expect(createNote).toHaveBeenCalledWith("", []);
+  });
+
+  test("clicking 'Add Note' with tags selected passes them to createNote", async () => {
+    const user = userEvent.setup();
+    createNote.mockClear();
+
+    render(
+      <SheetNotes
+        data={mockData}
+        message=""
+        selectedTags={["Legal"] as Tag[]}
+        setSelectedTags={setSelectedTags}
+        updating={false}
+        setMessage={setMessage}
+        createNote={createNote}
+        setConfirmDelete={setConfirmDelete}
+      />,
+    );
+
+    const buttons = screen.getAllByRole("button", { name: /add note/i });
+    await user.click(buttons[buttons.length - 1]);
+
+    expect(createNote).toHaveBeenCalledWith("", ["Legal"]);
   });
 
   //*************************************************
@@ -110,5 +139,29 @@ describe("SheetNotes", () => {
       open: true,
       id: "1",
     });
+  });
+
+  //*******************************************************
+  //TEST 7: Renders a pill for each tag on a tagged note
+  //*******************************************************
+
+  test("renders a pill for each tag on a note that has tags", () => {
+    const note = screen.getByText("Note 1").closest("article") as HTMLElement;
+    const tagPill = within(note).getByText("Financial");
+    expect(tagPill).toBeInTheDocument();
+  });
+
+  //*******************************************************
+  //TEST 8: Clicking a tag toggle calls setSelectedTags
+  //*******************************************************
+
+  test("clicking a tag toggle calls setSelectedTags with the tag added", async () => {
+    const user = userEvent.setup();
+    const tagButton = screen.getByRole("button", {
+      name: /^Risk$/i,
+    });
+
+    await user.click(tagButton);
+    expect(setSelectedTags).toHaveBeenCalledWith(["Risk"]);
   });
 });

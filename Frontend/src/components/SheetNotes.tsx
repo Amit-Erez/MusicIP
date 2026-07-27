@@ -1,12 +1,16 @@
-import { formatDate } from "@/lib/utils";
-import type { Application } from "@/types";
+import { formatDate, tagColor } from "@/lib/utils";
+import type { Application, Tag } from "@/types";
 import { faPaperPlane } from "@fortawesome/free-regular-svg-icons";
 import { faCircleNotch } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
+const ALL_TAGS: Tag[] = ["Follow-up", "Risk", "Financial", "Legal", "General"];
+
 export default function SheetNotes({
   data,
   message,
+  selectedTags,
+  setSelectedTags,
   updating,
   setConfirmDelete,
   setMessage,
@@ -14,13 +18,22 @@ export default function SheetNotes({
 }: {
   data: Application;
   message: string;
+  selectedTags: Tag[];
+  setSelectedTags: (tags: Tag[]) => void;
   updating: boolean;
-  createNote: (message: string) => void;
+  createNote: (message: string, tags: Tag[]) => void;
   setMessage: (message: string) => void;
   setConfirmDelete: React.Dispatch<
     React.SetStateAction<{ open: boolean; id: string }>
   >;
 }) {
+  function toggleTag(tag: Tag) {
+    setSelectedTags(
+      selectedTags.includes(tag)
+        ? selectedTags.filter((t) => t !== tag)
+        : [...selectedTags, tag],
+    );
+  }
   return (
     <div className="flex flex-col pt-4 pb-4 pl-5 pr-5 ">
       <h2 className="text-[#5F5E5A] font-medium uppercase mb-2">
@@ -39,16 +52,31 @@ export default function SheetNotes({
         placeholder="Add a note..."
         onChange={(e) => setMessage(e.target.value)}
       />
+      <div className="flex flex-wrap gap-2 pb-4" role="group" aria-label="Note tags">
+        {ALL_TAGS.map((tag) => (
+          <button
+            key={tag}
+            type="button"
+            aria-pressed={selectedTags.includes(tag)}
+            className={`pill cursor-pointer transition-all outline-none
+            focus-visible:ring-2 focus-visible:ring-[#534AB7]
+            ${selectedTags.includes(tag) ? tagColor(tag) : "coll"}`}
+            onClick={() => toggleTag(tag)}
+          >
+            {tag}
+          </button>
+        ))}
+      </div>
       <div className="flex justify-end pb-4">
         <button
           type="button"
-          className="border w-30 p-2 rounded-[8px] cursor-pointer hover:bg-[#F1EFE8] 
+          className="border w-30 p-2 rounded-[8px] cursor-pointer hover:bg-[#F1EFE8]
           outline-none
           focus-visible:ring-2
         focus-visible:ring-[#534AB7] transition-all active:invert"
           disabled={updating}
           onClick={() => {
-            createNote(message);
+            createNote(message, selectedTags);
           }}
         >
           {updating ? (
@@ -91,6 +119,15 @@ export default function SheetNotes({
               <div>Author: {note.author}</div>
               <div className="text-[#5F5E5A]">{formatDate(note.createdAt)}</div>
             </div>
+            {note.tags.length > 0 && (
+              <div className="flex flex-wrap gap-1 mb-2">
+                {note.tags.map((tag) => (
+                  <span key={tag} className={`pill ${tagColor(tag)}`}>
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            )}
             <div className="flex justify-between">
               <div className="mb-4 text-[#5F5E5A] w-[80%] min-w-0 wrap-break-word">
                 {note.text}

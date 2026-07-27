@@ -47,6 +47,30 @@
   border: solid 1px #EF5350;
 }
 
+.tag-followup {
+  background-color: #E5F0FB;
+  color: #1E4E8C;
+  border: solid 1px #B8D4F0;
+}
+
+.tag-financial {
+  background-color: #E8F5E9;
+  color: #1B5E20;
+  border: solid 1px #A5D6A7;
+}
+
+.tag-legal {
+  background-color: #EAECF5;
+  color: #363F72;
+  border: solid 1px #C7D0EA;
+}
+
+.tag-general {
+  background-color: #B9B9B8;
+  color: #444441;
+  border: solid 1px #9C9B98;
+}
+
 .fadeIn {
   animation: fadeIn 200ms ease-in
 }

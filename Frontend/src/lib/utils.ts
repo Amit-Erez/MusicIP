@@ -1,4 +1,4 @@
-import type { Application } from "@/types";
+import type { Application, Tag } from "@/types";
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
@@ -52,4 +52,12 @@ export function cn(...inputs: ClassValue[]) {
     if(appType === "Declined") return "dec"
     if(appType === "Publisher") return "pub"
     else return "coll"
+  }
+
+  export function tagColor(tag: Tag): string {
+    if(tag === "Risk") return "dec"
+    if(tag === "General") return "tag-general"
+    if(tag === "Follow-up") return "tag-followup"
+    if(tag === "Financial") return "tag-financial"
+    return "tag-legal"
   }
